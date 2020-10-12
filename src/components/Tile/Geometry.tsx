@@ -1,13 +1,16 @@
 import React, { FC } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry, MathUtils } from "three";
+import usePlanet from "../../contexts/planet";
+import { GeographicalCoordinates } from "../../contexts/planet/planet";
 
-import { GeographicalCoordinates, RADIUS } from "../../App";
+const ELEVATION = 1 / 8;
 
 const TileGeometry: FC<{ polygon: GeographicalCoordinates[] }> = ({
   polygon,
   ...props
 }) => {
+  const { noise, radius } = usePlanet();
   const ref = useUpdate<ConeGeometry>((geometry) => {
     const origin = geometry.vertices[0];
     const center = geometry.vertices[polygon.length + 1];
@@ -18,10 +21,14 @@ const TileGeometry: FC<{ polygon: GeographicalCoordinates[] }> = ({
       const vertex = geometry.vertices[index + 1];
       const phi = MathUtils.degToRad(90 - lat);
       const theta = MathUtils.degToRad(lng);
-      vertex.setFromSphericalCoords(RADIUS, phi, theta);
+      vertex.setFromSphericalCoords(radius, phi, theta);
       center.add(vertex);
     }
-    center.setLength(RADIUS);
+    for (let index = 1; index < geometry.vertices.length; index++) {
+      const vertex = geometry.vertices[index];
+      const elevation = noise(vertex) * ELEVATION;
+      vertex.setLength(radius + elevation);
+    }
   }, []);
 
   return <coneGeometry args={[1, 1, polygon.length]} {...props} ref={ref} />;

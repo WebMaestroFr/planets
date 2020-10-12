@@ -1,8 +1,8 @@
 import React, { FC, useRef } from "react";
 import { useFrame } from "react-three-fiber";
 import { Mesh } from "three";
-
-import { GeographicalCoordinates } from "../../App";
+import usePlanet from "../../contexts/planet";
+import { GeographicalCoordinates } from "../../contexts/planet/planet";
 import TileGeometry from "./Geometry";
 
 const TileMesh: FC<{ index: number; polygon: GeographicalCoordinates[] }> = ({
@@ -10,10 +10,9 @@ const TileMesh: FC<{ index: number; polygon: GeographicalCoordinates[] }> = ({
   polygon,
   ...props
 }) => {
-  // This reference will give us direct access to the mesh
   const ref = useRef<Mesh>(null);
+  const { random } = usePlanet();
 
-  // Rotate mesh every frame, this is outside of React without overhead
   useFrame(() => {
     if (ref && ref.current) {
       ref.current.rotation.x = ref.current.rotation.y += 0.02;
@@ -23,7 +22,7 @@ const TileMesh: FC<{ index: number; polygon: GeographicalCoordinates[] }> = ({
   return (
     <mesh {...props} ref={ref}>
       <TileGeometry polygon={polygon} />
-      <meshStandardMaterial color={Math.random() * 0xffffff} />
+      <meshStandardMaterial color={random() * 0xffffff} />
     </mesh>
   );
 };
