@@ -6,10 +6,9 @@ import { GeographicalCoordinates } from "../../contexts/planet/planet";
 
 const ELEVATION = 1 / 8;
 
-const TileGeometry: FC<{ polygon: GeographicalCoordinates[] }> = ({
-  polygon,
-  ...props
-}) => {
+const TileGeometry: FC<{
+  polygon: GeographicalCoordinates[];
+}> = ({ polygon, ...props }) => {
   const { noise, radius } = usePlanet();
   const ref = useUpdate<ConeGeometry>((geometry) => {
     const origin = geometry.vertices[0];
@@ -24,14 +23,24 @@ const TileGeometry: FC<{ polygon: GeographicalCoordinates[] }> = ({
       vertex.setFromSphericalCoords(radius, phi, theta);
       center.add(vertex);
     }
-    for (let index = 1; index < geometry.vertices.length; index++) {
+    center.setLength(radius);
+    const centerElevation = noise(center) * ELEVATION;
+    center.setLength(radius + centerElevation);
+    for (let index = 1; index < geometry.vertices.length - 1; index++) {
       const vertex = geometry.vertices[index];
       const elevation = noise(vertex) * ELEVATION;
-      vertex.setLength(radius + elevation);
+      vertex.setLength(radius + (elevation + centerElevation) / 2);
     }
   }, []);
 
-  return <coneGeometry args={[1, 1, polygon.length]} {...props} ref={ref} />;
+  return (
+    <coneGeometry
+      args={[1, 1, polygon.length]}
+      name="TileGeometry"
+      ref={ref}
+      {...props}
+    />
+  );
 };
 
 export default TileGeometry;

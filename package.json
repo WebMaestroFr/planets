@@ -13,6 +13,7 @@
     "@types/seedrandom": "^2.4.28",
     "d3-geo-voronoi": "^1.6.0",
     "node-sass": "^4.14.1",
+    "poisson-disk-sampling": "^2.2.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",

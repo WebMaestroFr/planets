@@ -1,13 +1,16 @@
 import React, { FC } from "react";
 import { Canvas } from "react-three-fiber";
 import Planet from "./components/Planet";
+import ControlsProvider from "./contexts/controls/Provider";
 
 const App: FC = () => {
   return (
     <Canvas>
       <ambientLight />
-      <pointLight position={[10, 10, 10]} />
-      <Planet radius={1} resolution={128} seed="mona" />
+      <ControlsProvider>
+        <pointLight position={[10, 10, 10]} />
+        <Planet position={[0, 0, 0]} />
+      </ControlsProvider>
     </Canvas>
   );
 };

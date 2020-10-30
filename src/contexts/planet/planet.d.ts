@@ -5,15 +5,15 @@ export type SphericalCoordinates = [number, number];
 
 export interface PlanetContext {
   radius: number;
-  resolution: number;
-  seed: string;
+  seed?: string;
   tiles: GeographicalCoordinates[][];
   noise: (vertex: Vector3) => number;
   random: () => number;
 }
 
 export interface PlanetProps {
-  radius: number;
-  resolution: number;
-  seed: string
+  minDistance?: number;
+  radius?: number;
+  seed?: string
+  tries?: number;
 }
