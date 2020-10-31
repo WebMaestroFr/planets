@@ -25,33 +25,32 @@ export const toSpherical = ([u, v]: [number, number]): SphericalCoordinates => [
   Math.acos(2 * v - 1),
 ];
 
-export const PlanetProvider: FC<PlanetProps> = ({
-  children,
-  minDistance = 0.02,
-  radius = 1,
-  seed,
-  tries = 8,
-}) => {
+export const PlanetProvider: FC<PlanetProps> = ({ children, settings }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [tiles, setTiles] = useState<GeographicalCoordinates[][]>([]);
 
-  const random = useCallback(seedrandom(seed), [seed]);
+  const random = useCallback(seedrandom(settings.seed), [settings.seed]);
   const poisson = useMemo(
     () =>
       new PoissonDiskSampling(
         {
           shape: [1.0, 1.0],
-          minDistance,
-          tries,
+          minDistance: settings.minDistance,
+          tries: settings.tries,
         },
         random
       ),
-    [minDistance, tries, random]
+    [settings, random]
   );
 
-  const simplex = useMemo(() => new SimplexNoise(seed), [seed]);
+  const simplex = useMemo(() => new SimplexNoise(random), [random]);
   const noise = useCallback(
-    ({ x, y, z }: Vector3) => simplex.noise3D(x, y, z),
+    ({ x, y, z }: Vector3, scale: number = 1, distance: number = 0) =>
+      simplex.noise3D(
+        (x + distance) * scale,
+        (y + distance) * scale,
+        (z + distance) * scale
+      ),
     [simplex]
   );
 
@@ -68,8 +67,7 @@ export const PlanetProvider: FC<PlanetProps> = ({
   return loading ? null : (
     <Planet.Provider
       value={{
-        radius,
-        seed,
+        settings,
         tiles,
         noise,
         random,

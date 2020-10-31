@@ -1,31 +1,26 @@
-import React, { FC, useRef } from "react";
+import React, { FC } from "react";
 import TileMesh from "../Tile";
 import usePlanet from "../../contexts/planet";
 import PlanetProvider from "../../contexts/planet/Provider";
 import { PlanetProps } from "../../contexts/planet/planet";
-import { Group } from "three";
 
-export interface PlanetTilesProps {
-  position?: [number, number, number];
-}
-
-const PlanetTiles: FC<PlanetTilesProps> = ({ position }) => {
-  const ref = useRef<Group>();
-  const { tiles } = usePlanet();
-
+const PlanetTiles: FC = () => {
+  const { settings, tiles } = usePlanet();
   return (
-    <group name="PlanetTiles" position={position} ref={ref}>
+    <group name="PlanetTiles">
       {tiles.map((polygon, index) => (
-        <TileMesh key={index} index={index} polygon={polygon} />
+        <TileMesh key={`${settings.seed}-${index}`} polygon={polygon} />
       ))}
     </group>
   );
 };
 
-const Planet: FC<PlanetProps & PlanetTilesProps> = ({ position, ...props }) => (
-  <PlanetProvider {...props}>
-    <PlanetTiles position={position} />
-  </PlanetProvider>
-);
+const Planet: FC<PlanetProps> = (props) => {
+  return (
+    <PlanetProvider {...props}>
+      <PlanetTiles />
+    </PlanetProvider>
+  );
+};
 
 export default Planet;

@@ -4,16 +4,22 @@ export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
 
 export interface PlanetContext {
-  radius: number;
-  seed?: string;
+  settings: PlanetSettings;
   tiles: GeographicalCoordinates[][];
   noise: (vertex: Vector3) => number;
   random: () => number;
 }
 
-export interface PlanetProps {
+export interface PlanetSettings {
+  distance: number;
   minDistance?: number;
-  radius?: number;
-  seed?: string
-  tries?: number;
+  position: [number, number, number]
+  radius: number;
+  scale: number;
+  seed: string
+  tries: number;
+}
+
+export interface PlanetProps {
+  settings: PlanetSettings 
 }
