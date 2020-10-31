@@ -9,7 +9,7 @@ const ELEVATION = 1 / 8;
 const TileGeometry: FC<{
   polygon: GeographicalCoordinates[];
 }> = ({ polygon, ...props }) => {
-  const { noise, settings } = usePlanet();
+  const { radius, noise } = usePlanet();
   const ref = useUpdate<ConeGeometry>(
     (geometry) => {
       const origin = geometry.vertices[0];
@@ -21,19 +21,19 @@ const TileGeometry: FC<{
         const vertex = geometry.vertices[index + 1];
         const phi = MathUtils.degToRad(90 - lat);
         const theta = MathUtils.degToRad(lng);
-        vertex.setFromSphericalCoords(settings.radius, phi, theta);
+        vertex.setFromSphericalCoords(radius, phi, theta);
         center.add(vertex);
       }
-      center.setLength(settings.radius);
+      center.setLength(radius);
       const centerElevation = noise(center) * ELEVATION;
-      center.setLength(settings.radius + centerElevation);
+      center.setLength(radius + centerElevation);
       for (let index = 1; index < geometry.vertices.length - 1; index++) {
         const vertex = geometry.vertices[index];
         const elevation = noise(vertex) * ELEVATION;
-        vertex.setLength(settings.radius + (elevation + centerElevation) / 2);
+        vertex.setLength(radius + (elevation + centerElevation) / 2);
       }
     },
-    [polygon, settings.radius, noise]
+    [polygon, radius, noise]
   );
 
   return (

@@ -4,7 +4,9 @@ import { SettingsContext } from "./settings";
 export const defaultSettings: SettingsContext = {
   planet: {
     distance: 0,
-    minDistance: 0.08,
+    hueMax: 240,
+    hueMin: 120,
+    minDistance: 0.04,
     position: [0, 0, 0],
     radius: 1,
     scale: 1,

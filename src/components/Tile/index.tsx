@@ -8,17 +8,17 @@ import TileGeometry from "./Geometry";
 const TileMesh: FC<{
   polygon: GeographicalCoordinates[];
 }> = ({ polygon, ...props }) => {
-  const { noise } = usePlanet();
+  const { hueMax, hueMin, noise } = usePlanet();
   const [color, setColor] = useState<string>();
   const ref = useUpdate<Mesh<Geometry>>(
     (mesh) => {
       const center = mesh.geometry.vertices[polygon.length + 1];
       const elevation = (noise(center) + 1) / 2;
-      const hue = Math.ceil(elevation * 360);
+      const hue = Math.ceil(elevation * (hueMax - hueMin) + hueMin);
       const luminosity = Math.ceil(elevation * 100);
       setColor(`hsl(${hue}, 50%, ${luminosity}%)`);
     },
-    [polygon.length, noise]
+    [polygon, noise]
   );
 
   return (
