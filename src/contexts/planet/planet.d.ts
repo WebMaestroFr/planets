@@ -10,17 +10,18 @@ export interface PlanetContext extends PlanetSettings {
 }
 
 export interface PlanetSettings {
+  biomes: { color: string; elevationMax: number }[];
   distance: number;
-  hueMax: number;
-  hueMin: number;
+  elevationMin: number;
+  elevationScale: number;
   minDistance: number;
-  position: [number, number, number]
+  position: [number, number, number];
   radius: number;
   scale: number;
-  seed: string
+  seed: string;
   tries: number;
 }
 
 export interface PlanetProps {
-  settings: PlanetSettings 
+  settings: PlanetSettings;
 }

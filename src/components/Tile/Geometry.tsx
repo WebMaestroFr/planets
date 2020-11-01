@@ -2,14 +2,16 @@ import React, { FC } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry, MathUtils } from "three";
 import usePlanet from "../../contexts/planet";
+import useSettings from "../../contexts/settings";
 import { GeographicalCoordinates } from "../../contexts/planet/planet";
-
-const ELEVATION = 1 / 8;
 
 const TileGeometry: FC<{
   polygon: GeographicalCoordinates[];
 }> = ({ polygon, ...props }) => {
   const { radius, noise } = usePlanet();
+  const {
+    planet: { elevationScale, elevationMin },
+  } = useSettings();
   const ref = useUpdate<ConeGeometry>(
     (geometry) => {
       const origin = geometry.vertices[0];
@@ -25,12 +27,16 @@ const TileGeometry: FC<{
         center.add(vertex);
       }
       center.setLength(radius);
-      const centerElevation = noise(center) * ELEVATION;
-      center.setLength(radius + centerElevation);
+      const centerElevation = noise(center);
+      const nextCenterElevation =
+        radius + Math.max(elevationMin, centerElevation) * elevationScale;
+      center.setLength(nextCenterElevation);
       for (let index = 1; index < geometry.vertices.length - 1; index++) {
         const vertex = geometry.vertices[index];
-        const elevation = noise(vertex) * ELEVATION;
-        vertex.setLength(radius + (elevation + centerElevation) / 2);
+        const elevation = noise(vertex);
+        const nextElevation =
+          radius + Math.max(elevationMin, elevation) * elevationScale;
+        vertex.setLength((nextElevation + nextCenterElevation) / 2);
       }
     },
     [polygon, radius, noise]

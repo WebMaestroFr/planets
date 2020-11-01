@@ -1,11 +1,5 @@
 import React, { ChangeEvent, FC, useState } from "react";
-import {
-  FormGroup,
-  InputGroup,
-  NumericInput,
-  RangeSlider,
-  Slider,
-} from "@blueprintjs/core";
+import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
 import { defaultSettings, Settings } from "./index";
 import { SettingsContext, SettingsProps } from "./settings";
 
@@ -17,15 +11,15 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
     currentTarget: { value },
   }: ChangeEvent<HTMLInputElement>) =>
     setPlanet((prevSettings) => ({ ...prevSettings, [key]: value }));
-  const onRangeChange = (keyMin: string, keyMax: string) => ([
-    valueMin,
-    valueMax,
-  ]: [number, number]) =>
-    setPlanet((prevSettings) => ({
-      ...prevSettings,
-      [keyMax]: valueMax,
-      [keyMin]: valueMin,
-    }));
+  // const onRangeChange = (keyMin: string, keyMax: string) => ([
+  //   valueMin,
+  //   valueMax,
+  // ]: [number, number]) =>
+  //   setPlanet((prevSettings) => ({
+  //     ...prevSettings,
+  //     [keyMax]: valueMax,
+  //     [keyMin]: valueMin,
+  //   }));
   const onValueChange = (key: string) => (value: number) =>
     setPlanet((prevSettings) => ({ ...prevSettings, [key]: value }));
 
@@ -80,16 +74,6 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
             onChange={onValueChange("scale")}
             stepSize={0.1}
             value={planet.scale}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-hue" label="Hue">
-          <RangeSlider
-            max={360}
-            min={0}
-            stepSize={1}
-            labelStepSize={90}
-            onChange={onRangeChange("hueMin", "hueMax")}
-            value={[planet.hueMin, planet.hueMax]}
           />
         </FormGroup>
       </form>

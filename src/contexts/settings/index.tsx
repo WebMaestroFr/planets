@@ -3,9 +3,17 @@ import { SettingsContext } from "./settings";
 
 export const defaultSettings: SettingsContext = {
   planet: {
+    biomes: [
+      { color: "steelblue", elevationMax: 0 },
+      { color: "lemonchiffon", elevationMax: 0.2 },
+      { color: "yellowgreen", elevationMax: 0.4 },
+      { color: "forestgreen", elevationMax: 0.6 },
+      { color: "burlywood", elevationMax: 0.8 },
+      { color: "snow", elevationMax: 1 },
+    ],
     distance: 0,
-    hueMax: 240,
-    hueMin: 120,
+    elevationScale: 0.2,
+    elevationMin: 0,
     minDistance: 0.04,
     position: [0, 0, 0],
     radius: 1,
