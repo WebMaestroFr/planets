@@ -3,17 +3,17 @@ import { Vector3 } from "three";
 export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
 
-export interface PlanetContext extends PlanetSettings {
-  tiles: GeographicalCoordinates[][];
+export interface PlanetContext {
+  polygons: SphericalCoordinates[][];
   noise: (vertex: Vector3) => number;
   random: () => number;
 }
 
 export interface PlanetSettings {
-  biomes: { color: string; elevationMax: number }[];
+  biomes: { color: string; noiseMax: number }[];
   distance: number;
-  elevationMin: number;
-  elevationScale: number;
+  noiseMin: number;
+  noiseScale: number;
   minDistance: number;
   position: [number, number, number];
   radius: number;

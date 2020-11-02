@@ -5,28 +5,21 @@ import seedrandom from "seedrandom";
 import SimplexNoise from "simplex-noise";
 import { Vector3 } from "three";
 import useSettings from "../settings";
-import { Planet } from "./index";
-import { GeographicalCoordinates, SphericalCoordinates } from "./planet";
+import {
+  Planet,
+  toGeographicalCoordinates,
+  toSphericalCoordinates,
+  toSphericalDistribution,
+} from "./index";
+import { SphericalCoordinates } from "./planet";
 
 // https://www.jasondavies.com/maps/random-points/
-
-export const toGeographical = ([
-  theta,
-  phi,
-]: SphericalCoordinates): GeographicalCoordinates => [
-  (180.0 * theta) / Math.PI - 180,
-  90 - (180.0 * phi) / Math.PI,
-];
-export const toSpherical = ([u, v]: [number, number]): SphericalCoordinates => [
-  2 * Math.PI * u,
-  Math.acos(2 * v - 1),
-];
 
 export const PlanetProvider: FC = ({ children }) => {
   const { planet } = useSettings();
 
   const [loading, setLoading] = useState<boolean>(true);
-  const [tiles, setTiles] = useState<GeographicalCoordinates[][]>([]);
+  const [polygons, setPolygons] = useState<SphericalCoordinates[][]>([]);
 
   // "Random" needs to be reseeded for any change on planet settings
   const random = useCallback(seedrandom(planet.seed), [planet]);
@@ -56,20 +49,23 @@ export const PlanetProvider: FC = ({ children }) => {
   );
 
   useEffect(() => {
-    const coordinates = poisson.fill().map(toSpherical).map(toGeographical);
-    const delaunay = geoDelaunay(coordinates);
-    const polygons = delaunay.polygons.map((polygon: number[]) =>
-      polygon.map((c) => delaunay.centers[c])
+    const sphericalCoordinates = poisson.fill().map(toSphericalDistribution);
+    const geographicalCoordinates = sphericalCoordinates.map(
+      toGeographicalCoordinates
     );
-    setTiles(polygons);
+    const delaunay = geoDelaunay(geographicalCoordinates);
+    const sphericalCenters = delaunay.centers.map(toSphericalCoordinates);
+    const polygons = delaunay.polygons.map((polygon: [number, number]) =>
+      polygon.map((c) => sphericalCenters[c])
+    );
+    setPolygons(polygons);
     setLoading(false);
   }, [poisson]);
 
   return loading ? null : (
     <Planet.Provider
       value={{
-        ...planet,
-        tiles,
+        polygons,
         noise,
         random,
       }}
