@@ -4,14 +4,14 @@ import usePlanet from "../../contexts/planet";
 import PlanetProvider from "../../contexts/planet/Provider";
 
 const PlanetTiles: FC = () => {
-  const { polygons } = usePlanet();
+  const { tiles } = usePlanet();
   // HACK key to force rerender
   // TO DO : Test out how to clean this up
   const time = Date.now().toString();
   return (
     <group name="PlanetTiles">
-      {polygons.map((polygon, index) => (
-        <TileMesh key={`${time}-${index}`} polygon={polygon} />
+      {tiles.map(({ center, polygon }, index) => (
+        <TileMesh key={`${time}-${index}`} center={center} polygon={polygon} />
       ))}
     </group>
   );

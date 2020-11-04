@@ -2,24 +2,21 @@ import React, { FC } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry } from "three";
 import { getTile } from ".";
-import { SphericalCoordinates } from "../../contexts/planet/planet";
+import { PlanetTile } from "../../contexts/planet/planet";
 
-const TileGeometry: FC<{
-  polygon: SphericalCoordinates[];
-}> = ({ polygon, ...props }) => {
+const TileGeometry: FC<PlanetTile> = ({ center, polygon, ...props }) => {
   const ref = useUpdate<ConeGeometry>(
     ({ vertices }) => {
-      const { center, origin, points } = getTile(vertices);
-      center.set(0, 0, 0);
-      origin.set(0, 0, 0);
-      for (let index = 0; index < points.length; index++) {
-        const vertex = points[index];
-        vertex.setFromSphericalCoords(1, ...polygon[index]);
-        center.add(vertex);
+      const tile = getTile(vertices);
+      tile.center.set(0, 0, 0);
+      tile.origin.set(0, 0, 0);
+      for (let index = 0; index < polygon.length; index++) {
+        tile.polygon[index].copy(polygon[index]);
+        tile.center.add(polygon[index]);
       }
-      center.setLength(1);
+      tile.center.divideScalar(polygon.length);
     },
-    [polygon]
+    [center, polygon]
   );
   return (
     <coneGeometry

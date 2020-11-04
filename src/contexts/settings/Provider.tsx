@@ -57,23 +57,73 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
             value={planet.minDistance}
           />
         </FormGroup>
-        <FormGroup className="Settings-distance" label="Noise Distance">
+        <FormGroup className="Settings-noiseMin" label="Minimum Noise">
+          <Slider
+            labelStepSize={0.5}
+            max={1}
+            min={-1}
+            onChange={onValueChange("noiseMin")}
+            stepSize={0.1}
+            value={planet.noiseMin}
+          />
+        </FormGroup>
+        <FormGroup className="Settings-noiseDistance" label="Noise Distance">
           <NumericInput
             fill={true}
             minorStepSize={null}
-            onValueChange={onValueChange("distance")}
+            onValueChange={onValueChange("noiseDistanceX")}
             stepSize={0.1}
-            value={planet.distance}
+            value={planet.noiseDistanceX}
+          />
+          <NumericInput
+            fill={true}
+            minorStepSize={null}
+            onValueChange={onValueChange("noiseDistanceY")}
+            stepSize={0.1}
+            value={planet.noiseDistanceY}
+          />
+          <NumericInput
+            fill={true}
+            minorStepSize={null}
+            onValueChange={onValueChange("noiseDistanceZ")}
+            stepSize={0.1}
+            value={planet.noiseDistanceZ}
           />
         </FormGroup>
-        <FormGroup className="Settings-scale" label="Noise Scale">
+        <FormGroup className="Settings-noiseScale" label="Noise Scale">
           <Slider
             labelStepSize={0.8}
             max={2.6}
             min={0.2}
-            onChange={onValueChange("scale")}
+            onChange={onValueChange("noiseScaleX")}
             stepSize={0.1}
-            value={planet.scale}
+            value={planet.noiseScaleX}
+          />
+          <Slider
+            labelStepSize={0.8}
+            max={2.6}
+            min={0.2}
+            onChange={onValueChange("noiseScaleY")}
+            stepSize={0.1}
+            value={planet.noiseScaleY}
+          />
+          <Slider
+            labelStepSize={0.8}
+            max={2.6}
+            min={0.2}
+            onChange={onValueChange("noiseScaleZ")}
+            stepSize={0.1}
+            value={planet.noiseScaleZ}
+          />
+        </FormGroup>
+        <FormGroup className="Settings-elevationScale" label="Elevation Scale">
+          <Slider
+            labelStepSize={0.25}
+            max={0.5}
+            min={0}
+            onChange={onValueChange("elevationScale")}
+            stepSize={0.01}
+            value={planet.elevationScale}
           />
         </FormGroup>
       </form>

@@ -1,23 +1,32 @@
-import { Vector3 } from "three";
+import { Spherical, Vector, Vector3 } from "three";
 
 export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
 
+export interface PlanetTile {
+  center: Vector3;
+  polygon: Vector3[];
+}
+
 export interface PlanetContext {
-  polygons: SphericalCoordinates[][];
   noise: (vertex: Vector3) => number;
-  random: () => number;
+  tiles: PlanetTile[];
 }
 
 export interface PlanetSettings {
   biomes: { color: string; noiseMax: number }[];
-  distance: number;
+  elevationScale: number;
+  noiseDistanceX: number;
+  noiseDistanceY: number;
+  noiseDistanceZ: number;
   noiseMin: number;
-  noiseScale: number;
+  noiseRadius: number;
+  noiseScaleX: number;
+  noiseScaleY: number;
+  noiseScaleZ: number;
   minDistance: number;
   position: [number, number, number];
   radius: number;
-  scale: number;
   seed: string;
   tries: number;
 }
