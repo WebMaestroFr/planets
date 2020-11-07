@@ -14,41 +14,50 @@ export const getTile = (vertices: Vector3[]): Tile => ({
 });
 
 const TileMesh: FC<PlanetTile> = ({ center, polygon, ...props }) => {
-  const { biomes, elevationScale, noiseMin, radius } = useSettings().planet;
+  const {
+    biomes,
+    elevationOffset,
+    elevationScale,
+    noiseMin,
+  } = useSettings().planet;
   const { noise } = usePlanet();
   const [color, setColor] = useState<string>();
-  const sortedBiomes = biomes.sort((a, b) => a.noiseMax - b.noiseMax);
+
+  const applyNoise = useCallback(
+    (vertex: Vector3, noise: number = -Infinity) => {
+      const elevation = 1 + Math.max(noiseMin, noise) * elevationScale;
+      vertex.setLength(elevation);
+      return elevation;
+    },
+    [elevationScale, noiseMin]
+  );
 
   const applyElevation = useCallback(
     (tile: Tile): number => {
       const centerNoise = noise(center);
+      const centerElevation = applyNoise(tile.center, centerNoise);
       if (centerNoise <= noiseMin) {
-        const minElevation = radius + noiseMin * elevationScale;
-        tile.center.setLength(minElevation);
         for (let index = 0; index < polygon.length; index++) {
-          tile.polygon[index].setLength(minElevation);
+          tile.polygon[index].setLength(centerElevation);
         }
       } else {
-        const applyElevation = (noise: number, vertex: Vector3) => {
-          const elevation = radius + Math.max(noiseMin, noise) * elevationScale;
-          vertex.setLength(elevation);
-        };
-        applyElevation(centerNoise, tile.center);
         for (let index = 0; index < polygon.length; index++) {
           const pointNoise = noise(polygon[index]);
-          applyElevation((centerNoise + pointNoise) / 2, tile.polygon[index]);
+          const elevationNoise =
+            centerNoise * elevationOffset + pointNoise * (1 - elevationOffset);
+          applyNoise(tile.polygon[index], elevationNoise);
         }
       }
       return centerNoise;
     },
-    [center, elevationScale, noise, noiseMin, polygon, radius]
+    [applyNoise, center, elevationOffset, noise, noiseMin, polygon]
   );
 
   const ref = useUpdate<Mesh<Geometry>>(
     ({ geometry: { vertices } }) => {
       const tile = getTile(vertices);
       const centerNoise = applyElevation(tile);
-      const biome = sortedBiomes.find((c) => centerNoise <= c.noiseMax);
+      const biome = biomes.find((c) => centerNoise <= c.noiseMax);
       if (biome) {
         setColor(biome.color);
       }

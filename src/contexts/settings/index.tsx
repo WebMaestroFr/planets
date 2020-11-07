@@ -11,6 +11,7 @@ export const defaultSettings: SettingsContext = {
       { color: "burlywood", noiseMax: 0.8 },
       { color: "snow", noiseMax: 1 },
     ],
+    elevationOffset: 0.5,
     elevationScale: 0.5 / 3,
     noiseDistanceX: 0,
     noiseDistanceY: 0,
@@ -30,4 +31,5 @@ export const defaultSettings: SettingsContext = {
 
 export const Settings = createContext<SettingsContext>(defaultSettings);
 
-export default () => useContext(Settings);
+const Context = () => useContext(Settings);
+export default Context;

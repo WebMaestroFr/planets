@@ -30,4 +30,5 @@ export const toSphericalDistribution = ([u, v]: [
   2 * Math.PI * u - Math.PI,
 ];
 
-export default () => useContext(Planet) as PlanetContext;
+const Context = () => useContext(Planet) as PlanetContext;
+export default Context;

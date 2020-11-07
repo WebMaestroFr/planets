@@ -25,9 +25,6 @@ export const PlanetProvider: FC = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [tiles, setTiles] = useState<PlanetTile[]>([]);
 
-  // "Random" needs to be reseeded for any change on planet settings
-  const random = useCallback(seedrandom(settings.seed), [settings.seed]);
-
   const poisson = useMemo(
     () =>
       new PoissonDiskSampling(
@@ -36,12 +33,14 @@ export const PlanetProvider: FC = ({ children }) => {
           minDistance: settings.minDistance,
           tries: settings.tries,
         },
-        random
+        seedrandom(settings.seed)
       ),
-    [settings.minDistance, settings.tries, random]
+    [settings.minDistance, settings.tries, settings.seed]
   );
 
-  const simplex = useMemo(() => new SimplexNoise(random), [random]);
+  const simplex = useMemo(() => new SimplexNoise(settings.seed), [
+    settings.seed,
+  ]);
   const noise = useCallback(
     ({ x, y, z }: Vector3) =>
       simplex.noise3D(
