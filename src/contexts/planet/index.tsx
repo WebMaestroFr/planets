@@ -22,6 +22,7 @@ export const toSphericalCoordinates = ([
   MathUtils.degToRad(90 - lat),
   MathUtils.degToRad(lng),
 ];
+// https://www.jasondavies.com/maps/random-points/
 export const toSphericalDistribution = ([u, v]: [
   number,
   number

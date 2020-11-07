@@ -1,11 +1,5 @@
 import React, { ChangeEvent, FC, useState } from "react";
-import {
-  ControlGroup,
-  FormGroup,
-  InputGroup,
-  NumericInput,
-  Slider,
-} from "@blueprintjs/core";
+import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
 import { defaultSettings, Settings } from "./index";
 import { SettingsContext, SettingsProps } from "./settings";
 
@@ -43,10 +37,8 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
         <FormGroup className="Settings-radius" label="Radius">
           <NumericInput
             fill={true}
-            min={0.1}
-            minorStepSize={null}
+            min={0}
             onValueChange={onValueChange("radius")}
-            stepSize={0.1}
             value={planet.radius}
           />
         </FormGroup>
@@ -54,81 +46,33 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
           className="Settings-minDistance"
           label="Sampling Minimum Distance"
         >
-          <Slider
-            labelStepSize={0.02}
-            max={0.08}
-            min={0.02}
-            onChange={onValueChange("minDistance")}
+          <NumericInput
+            fill={true}
+            min={0.01}
+            minorStepSize={null}
+            onValueChange={onValueChange("minDistance")}
             stepSize={0.01}
             value={planet.minDistance}
           />
         </FormGroup>
         <FormGroup className="Settings-tries" label="Sampling tries">
-          <Slider
-            labelStepSize={8}
-            max={24}
-            min={0}
-            onChange={onValueChange("tries")}
-            stepSize={1}
+          <NumericInput
+            fill={true}
+            min={2}
+            minorStepSize={null}
+            onValueChange={onValueChange("tries")}
             value={planet.tries}
           />
         </FormGroup>
         <FormGroup className="Settings-noiseRadius" label="Noise Radius">
-          <Slider
-            labelStepSize={0.8}
-            max={3.4}
-            min={0.2}
-            onChange={onValueChange("noiseRadius")}
-            stepSize={0.01}
+          <NumericInput
+            fill={true}
+            min={0}
+            minorStepSize={null}
+            onValueChange={onValueChange("noiseRadius")}
+            stepSize={0.1}
             value={planet.noiseRadius}
           />
-        </FormGroup>
-        <FormGroup className="Settings-noiseDistance" label="Noise Distance">
-          <ControlGroup fill={true} vertical={false}>
-            <NumericInput
-              fill={true}
-              onValueChange={onValueChange("noiseDistanceX")}
-              stepSize={0.1}
-              value={planet.noiseDistanceX}
-            />
-            <NumericInput
-              fill={true}
-              onValueChange={onValueChange("noiseDistanceY")}
-              stepSize={0.1}
-              value={planet.noiseDistanceY}
-            />
-            <NumericInput
-              fill={true}
-              onValueChange={onValueChange("noiseDistanceZ")}
-              stepSize={0.1}
-              value={planet.noiseDistanceZ}
-            />
-          </ControlGroup>
-        </FormGroup>
-        <FormGroup className="Settings-noiseScale" label="Noise Scale">
-          <ControlGroup fill={true} vertical={false}>
-            <NumericInput
-              fill={true}
-              min={0.2}
-              onValueChange={onValueChange("noiseScaleX")}
-              stepSize={0.1}
-              value={planet.noiseScaleX}
-            />
-            <NumericInput
-              fill={true}
-              min={0.2}
-              onValueChange={onValueChange("noiseScaleY")}
-              stepSize={0.1}
-              value={planet.noiseScaleY}
-            />
-            <NumericInput
-              fill={true}
-              min={0.2}
-              onValueChange={onValueChange("noiseScaleZ")}
-              stepSize={0.1}
-              value={planet.noiseScaleZ}
-            />
-          </ControlGroup>
         </FormGroup>
         <FormGroup className="Settings-noiseMin" label="Minimum Noise">
           <Slider
@@ -154,12 +98,11 @@ export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
           />
         </FormGroup>
         <FormGroup className="Settings-elevationScale" label="Elevation Scale">
-          <Slider
-            labelStepSize={0.25}
-            max={0.5}
+          <NumericInput
+            fill={true}
             min={0}
-            onChange={onValueChange("elevationScale")}
-            stepSize={0.01}
+            minorStepSize={null}
+            onValueChange={onValueChange("elevationScale")}
             value={planet.elevationScale}
           />
         </FormGroup>

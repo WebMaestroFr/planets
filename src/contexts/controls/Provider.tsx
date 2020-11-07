@@ -17,8 +17,8 @@ export const ControlsProvider: FC<ControlsProps> = ({ children, ...props }) => {
   });
 
   useEffect(() => {
-    camera.position.set(0, 0, 2);
-  }, [camera]);
+    camera.position.set(0, 0, 16);
+  }, [camera.position]);
 
   return (
     <Controls.Provider value={props}>

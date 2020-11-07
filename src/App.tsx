@@ -12,7 +12,7 @@ const Scene: FC = () => {
       <Settings.Provider value={settings}>
         <ambientLight />
         <ControlsProvider>
-          <pointLight position={[10, 10, 10]} />
+          <pointLight position={[16, 16, 16]} />
           <Planet />
         </ControlsProvider>
       </Settings.Provider>

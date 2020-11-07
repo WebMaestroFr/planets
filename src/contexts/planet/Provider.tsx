@@ -14,13 +14,12 @@ import {
 import {
   GeographicalCoordinates,
   PlanetTile,
+  PlanetTilePoint,
   SphericalCoordinates,
 } from "./planet";
 
-// https://www.jasondavies.com/maps/random-points/
-
 export const PlanetProvider: FC = ({ children }) => {
-  const settings = useSettings().planet;
+  const { minDistance, noiseRadius, seed, tries } = useSettings().planet;
 
   const [loading, setLoading] = useState<boolean>(true);
   const [tiles, setTiles] = useState<PlanetTile[]>([]);
@@ -30,41 +29,30 @@ export const PlanetProvider: FC = ({ children }) => {
       new PoissonDiskSampling(
         {
           shape: [1.0, 1.0],
-          minDistance: settings.minDistance,
-          tries: settings.tries,
+          minDistance,
+          tries,
         },
-        seedrandom(settings.seed)
+        seedrandom(seed)
       ),
-    [settings.minDistance, settings.tries, settings.seed]
+    [minDistance, tries, seed]
   );
 
-  const simplex = useMemo(() => new SimplexNoise(settings.seed), [
-    settings.seed,
-  ]);
+  const simplex = useMemo(() => new SimplexNoise(seed), [seed]);
   const noise = useCallback(
-    ({ x, y, z }: Vector3) =>
-      simplex.noise3D(
-        (x + settings.noiseDistanceX) * settings.noiseScaleX,
-        (y + settings.noiseDistanceY) * settings.noiseScaleY,
-        (z + settings.noiseDistanceZ) * settings.noiseScaleZ
-      ),
-    [
-      settings.noiseDistanceX,
-      settings.noiseDistanceY,
-      settings.noiseDistanceZ,
-      settings.noiseScaleX,
-      settings.noiseScaleY,
-      settings.noiseScaleZ,
-      simplex,
-    ]
+    (point: Vector3) => {
+      const { x, y, z } = point.clone().setLength(noiseRadius);
+      return simplex.noise3D(x, y, z);
+    },
+    [simplex, noiseRadius]
   );
 
-  const toNoiseVertex = useCallback(
-    ([phi, theta]: SphericalCoordinates): Vector3 => {
-      const vertex = new Vector3();
-      return vertex.setFromSphericalCoords(settings.noiseRadius, phi, theta);
+  const toTilePoint = useCallback(
+    ([phi, theta]: SphericalCoordinates): PlanetTilePoint => {
+      const position = new Vector3();
+      position.setFromSphericalCoords(1, phi, theta);
+      return { noise: noise(position), position };
     },
-    [settings.noiseRadius]
+    [noise]
   );
 
   useEffect(() => {
@@ -78,14 +66,14 @@ export const PlanetProvider: FC = ({ children }) => {
     } = geoDelaunay(geographicalCoordinates);
     const points = delaunay.centers
       .map(toSphericalCoordinates)
-      .map(toNoiseVertex);
+      .map(toTilePoint);
     const nextTiles = delaunay.polygons.map((polygon, c) => ({
-      center: toNoiseVertex(sphericalCoordinates[c]),
+      center: toTilePoint(sphericalCoordinates[c]),
       polygon: polygon.map((p) => points[p]),
     }));
     setTiles(nextTiles);
     setLoading(false);
-  }, [poisson, toNoiseVertex]);
+  }, [poisson, toTilePoint]);
 
   return loading ? null : (
     <Planet.Provider

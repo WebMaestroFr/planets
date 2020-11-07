@@ -22,7 +22,6 @@ describe("Planet", () => {
       const geographicalCoordinates = toGeographicalCoordinates(
         sphericalCoordinates
       );
-      console.log({ data, sphericalCoordinates, geographicalCoordinates });
       expect(sphericalCoordinates).toEqual(sphericalDistribution);
       expect(geographicalCoordinates).toEqual(geographicalDistribution);
     });
