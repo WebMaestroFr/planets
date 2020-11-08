@@ -4,7 +4,6 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import seedrandom from "seedrandom";
 import SimplexNoise from "simplex-noise";
 import { Vector3 } from "three";
-import TileMesh from "../Tile";
 import {
   toGeographicalCoordinates,
   toSphericalCoordinates,
@@ -17,6 +16,7 @@ import {
   PlanetTilePoint,
   SphericalCoordinates,
 } from "../../objects/planet/planet";
+import Tile from "./Tile";
 
 export const Planet: FC<{ settings: PlanetSettings }> = ({ settings }) => {
   const [tiles, setTiles] = useState<PlanetTile[]>([]);
@@ -82,7 +82,16 @@ export const Planet: FC<{ settings: PlanetSettings }> = ({ settings }) => {
   return (
     <group name="Planet">
       {tiles.map((tile, index) => (
-        <TileMesh key={`${timeKey}-${index}`} settings={settings} tile={tile} />
+        <Tile
+          key={`${timeKey}-${index}`}
+          center={tile.center}
+          color={tile.color}
+          elevationOffset={settings.elevationOffset}
+          elevationScale={settings.elevationScale}
+          noiseMin={settings.noiseMin}
+          polygon={tile.polygon}
+          radius={settings.radius}
+        />
       ))}
     </group>
   );
