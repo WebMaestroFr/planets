@@ -1,4 +1,4 @@
-import { PlanetSettings } from "../planet/planet";
+import { PlanetSettings } from "../../objects/planet/planet";
 
 export interface SettingsContext {
   planet: PlanetSettings;

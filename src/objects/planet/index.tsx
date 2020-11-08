@@ -1,12 +1,15 @@
-import { createContext, useContext } from "react";
-import { MathUtils } from "three";
+import { MathUtils, Vector3 } from "three";
 import {
   GeographicalCoordinates,
-  PlanetContext,
+  PlanetTilePolygon,
   SphericalCoordinates,
 } from "./planet";
 
-export const Planet = createContext<PlanetContext | null>(null);
+export const getTile = (vertices: Vector3[]): PlanetTilePolygon => ({
+  center: vertices[vertices.length - 1],
+  origin: vertices[0],
+  polygon: vertices.slice(1, vertices.length - 1),
+});
 
 export const toGeographicalCoordinates = ([
   phi,
@@ -30,6 +33,3 @@ export const toSphericalDistribution = ([u, v]: [
   Math.PI - Math.acos(2 * v - 1),
   2 * Math.PI * u - Math.PI,
 ];
-
-const Context = () => useContext(Planet) as PlanetContext;
-export default Context;

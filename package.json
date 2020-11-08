@@ -13,8 +13,10 @@
     "@types/react-dom": "^16.9.8",
     "@types/seedrandom": "^2.4.28",
     "d3-geo-voronoi": "^1.6.0",
+    "gh-pages": "^3.1.0",
     "node-sass": "^4.14.1",
     "poisson-disk-sampling": "^2.2.2",
+    "prettier": "^2.1.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
@@ -22,10 +24,7 @@
     "seedrandom": "^3.0.5",
     "simplex-noise": "^2.4.0",
     "three": "^0.121.1",
-    "typescript": "^4.0.3",    
-    "env-cmd": "^10.1.0",
-    "gh-pages": "^3.1.0",
-    "prettier": "^2.1.2",
+    "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

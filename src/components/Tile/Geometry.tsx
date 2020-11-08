@@ -1,18 +1,18 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry, Vector3 } from "three";
-import { getTile, Tile } from ".";
-import { PlanetTile } from "../../contexts/planet/planet";
-import useSettings from "../../contexts/settings";
+import { getTile } from "../../objects/planet";
+import {
+  PlanetSettings,
+  PlanetTilePoint,
+  PlanetTilePolygon,
+} from "../../objects/planet/planet";
 
-const TileGeometry: FC<PlanetTile> = ({ center, polygon, ...props }) => {
-  const {
-    elevationOffset,
-    elevationScale,
-    noiseMin,
-    radius,
-  } = useSettings().planet;
-
+const TileGeometry: FC<{
+  center: PlanetTilePoint;
+  polygon: PlanetTilePoint[];
+  settings: PlanetSettings;
+}> = ({ center, polygon, settings, ...props }) => {
   const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
     polygon,
   ]);
@@ -24,23 +24,26 @@ const TileGeometry: FC<PlanetTile> = ({ center, polygon, ...props }) => {
 
   const applyNoise = useCallback(
     (vertex: Vector3, noise: number) => {
-      const elevation = radius + Math.max(noiseMin, noise) * elevationScale;
+      const elevation =
+        settings.radius +
+        Math.max(settings.noiseMin, noise) * settings.elevationScale;
       vertex.setLength(elevation);
       return elevation;
     },
-    [elevationScale, noiseMin, radius]
+    [settings.elevationScale, settings.noiseMin, settings.radius]
   );
 
   const getElevationNoise = useCallback(
     (noise: number) =>
-      center.noise * elevationOffset + noise * (1 - elevationOffset),
-    [center.noise, elevationOffset]
+      center.noise * settings.elevationOffset +
+      noise * (1 - settings.elevationOffset),
+    [center.noise, settings.elevationOffset]
   );
 
   const applyElevation = useCallback(
-    (tile: Tile) => {
+    (tile: PlanetTilePolygon) => {
       const centerElevation = applyNoise(tile.center, center.noise);
-      if (center.noise <= noiseMin) {
+      if (center.noise <= settings.noiseMin) {
         for (let index = 0; index < tile.polygon.length; index++) {
           tile.polygon[index].setLength(centerElevation);
         }
@@ -51,11 +54,17 @@ const TileGeometry: FC<PlanetTile> = ({ center, polygon, ...props }) => {
         }
       }
     },
-    [applyNoise, center.noise, noiseMin, polygonNoises]
+    [
+      applyNoise,
+      center.noise,
+      getElevationNoise,
+      polygonNoises,
+      settings.noiseMin,
+    ]
   );
 
   const applyPolygon = useCallback(
-    (tile: Tile) => {
+    (tile: PlanetTilePolygon) => {
       tile.origin.set(0, 0, 0);
       tile.center.copy(center.position);
       for (let index = 0; index < tile.polygon.length; index++) {
