@@ -1,112 +1,45 @@
-import React, { ChangeEvent, FC, useState } from "react";
-import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { defaultSettings, Settings } from "./index";
-import { SettingsContext, SettingsProps } from "./settings";
+import PlanetForm from "../../components/Planet/Form";
+import { PlanetSettings } from "../../objects/planet/planet";
 
-export const SettingsProvider: FC<SettingsProps> = ({ children }) => {
-  const [planet, setPlanet] = useState<SettingsContext["planet"]>(
-    defaultSettings["planet"]
+function useDebounce<T>(
+  initialValue: T,
+  time: number
+): [T, T, Dispatch<SetStateAction<T>>] {
+  const [value, setValue] = useState<T>(initialValue);
+  const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      setDebouncedValue(value);
+    }, time);
+    return () => {
+      clearTimeout(debounce);
+    };
+  }, [value, time]);
+
+  return [debouncedValue, value, setValue];
+}
+
+export const SettingsProvider: FC = ({ children }) => {
+  const [debouncedPlanet, planet, setPlanet] = useDebounce<PlanetSettings>(
+    defaultSettings["planet"],
+    400
   );
-  const onChange = (key: string) => ({
-    currentTarget: { value },
-  }: ChangeEvent<HTMLInputElement>) =>
-    setPlanet((prevSettings) => ({ ...prevSettings, [key]: value }));
-  // const onRangeChange = (keyMin: string, keyMax: string) => ([
-  //   valueMin,
-  //   valueMax,
-  // ]: [number, number]) =>
-  //   setPlanet((prevSettings) => ({
-  //     ...prevSettings,
-  //     [keyMax]: valueMax,
-  //     [keyMin]: valueMin,
-  //   }));
-  const onValueChange = (key: string) => (value: number) =>
-    setPlanet((prevSettings) => ({ ...prevSettings, [key]: value }));
 
   return (
-    <Settings.Provider value={{ planet }}>
+    <Settings.Provider value={{ planet: debouncedPlanet }}>
       {children}
-      <form className="Settings">
-        <FormGroup className="Settings-seed" label="Seed">
-          <InputGroup
-            defaultValue={planet.seed}
-            fill={true}
-            onChange={onChange("seed")}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-radius" label="Radius">
-          <NumericInput
-            fill={true}
-            min={0}
-            onValueChange={onValueChange("radius")}
-            value={planet.radius}
-          />
-        </FormGroup>
-        <FormGroup
-          className="Settings-minDistance"
-          label="Sampling Minimum Distance"
-        >
-          <NumericInput
-            fill={true}
-            min={0.01}
-            minorStepSize={null}
-            onValueChange={onValueChange("minDistance")}
-            stepSize={0.01}
-            value={planet.minDistance}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-tries" label="Sampling tries">
-          <NumericInput
-            fill={true}
-            min={2}
-            minorStepSize={null}
-            onValueChange={onValueChange("tries")}
-            value={planet.tries}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-noiseRadius" label="Noise Radius">
-          <NumericInput
-            fill={true}
-            min={0}
-            minorStepSize={null}
-            onValueChange={onValueChange("noiseRadius")}
-            stepSize={0.1}
-            value={planet.noiseRadius}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-noiseMin" label="Minimum Noise">
-          <Slider
-            labelStepSize={0.5}
-            max={1}
-            min={-1}
-            onChange={onValueChange("noiseMin")}
-            stepSize={0.1}
-            value={planet.noiseMin}
-          />
-        </FormGroup>
-        <FormGroup
-          className="Settings-elevationOffset"
-          label="Elevation Offset"
-        >
-          <Slider
-            labelStepSize={0.25}
-            max={1}
-            min={0}
-            onChange={onValueChange("elevationOffset")}
-            stepSize={0.01}
-            value={planet.elevationOffset}
-          />
-        </FormGroup>
-        <FormGroup className="Settings-elevationScale" label="Elevation Scale">
-          <NumericInput
-            fill={true}
-            min={0}
-            minorStepSize={null}
-            onValueChange={onValueChange("elevationScale")}
-            value={planet.elevationScale}
-          />
-        </FormGroup>
-      </form>
+      <div className="Settings">
+        <PlanetForm onUpdate={setPlanet} settings={planet} />
+      </div>
     </Settings.Provider>
   );
 };

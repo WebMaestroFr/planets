@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry, Mesh, Vector3 } from "three";
+import useSettings from "../../contexts/settings";
 import { getTile } from "../../objects/planet";
 import {
   PlanetTilePoint,
@@ -9,22 +10,17 @@ import {
 
 const PlanetTile: FC<{
   center: PlanetTilePoint;
-  color?: string;
-  elevationOffset: number;
-  elevationScale: number;
-  noiseMin: number;
   polygon: PlanetTilePoint[];
-  radius: number;
-}> = ({
-  center,
-  color,
-  elevationOffset,
-  elevationScale,
-  noiseMin,
-  polygon,
-  radius,
-  ...props
-}) => {
+}> = ({ center, polygon, ...props }) => {
+  const {
+    planet: { biomes, elevationOffset, elevationScale, noiseMin, radius },
+  } = useSettings();
+
+  const color = useMemo(
+    () => biomes.find((biome) => center.noise <= biome.noiseMax)?.color,
+    [biomes, center.noise]
+  );
+
   const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
     polygon,
   ]);
