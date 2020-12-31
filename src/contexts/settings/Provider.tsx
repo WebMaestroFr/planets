@@ -28,14 +28,14 @@ function useDebounce<T>(
   return [debouncedValue, value, setValue];
 }
 
-export const SettingsProvider: FC = ({ children }) => {
+export const SettingsProvider: FC = ({ children, ...props }) => {
   const [debouncedPlanet, planet, setPlanet] = useDebounce<PlanetSettings>(
     defaultSettings["planet"],
     400
   );
 
   return (
-    <Settings.Provider value={{ planet: debouncedPlanet }}>
+    <Settings.Provider value={{ planet: debouncedPlanet }} {...props}>
       {children}
       <div className="Settings">
         <PlanetForm onUpdate={setPlanet} settings={planet} />

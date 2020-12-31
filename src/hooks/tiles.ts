@@ -68,10 +68,12 @@ export function useTiles({
     const points = delaunay.centers
       .map(toSphericalCoordinates)
       .map(toTilePoint);
-    const nextTiles = delaunay.polygons.map((polygon, c) => {
-      const center = toTilePoint(sphericalCoordinates[c]);
+    const timeKey = Date.now().toString();
+    const nextTiles = delaunay.polygons.map((polygon, index) => {
+      const center = toTilePoint(sphericalCoordinates[index]);
       return {
         center,
+        key: `${timeKey}-${index}`,
         polygon: polygon.map((p) => points[p]),
       };
     });

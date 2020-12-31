@@ -22,7 +22,7 @@ export interface PlanetSettings {
 
 export interface PlanetTile {
   center: PlanetTilePoint;
-  color?: string;
+  key: string;
   polygon: PlanetTilePoint[];
 }
 

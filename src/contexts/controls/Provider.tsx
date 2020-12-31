@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useRef } from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Controls } from "./index";
 import { ControlsProps } from "./controls";
@@ -15,10 +15,6 @@ export const ControlsProvider: FC<ControlsProps> = ({ children, ...props }) => {
       ref.current.update();
     }
   });
-
-  useEffect(() => {
-    camera.position.set(0, 0, 16);
-  }, [camera.position]);
 
   return (
     <Controls.Provider value={props}>

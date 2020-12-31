@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
-import { ConeGeometry, Mesh, Vector3 } from "three";
-import useSettings from "../../contexts/settings";
+import { ConeGeometry, Material, Mesh, Vector3 } from "three";
+import { usePlanet } from ".";
 import { getTile } from "../../objects/planet";
 import {
   PlanetTilePoint,
@@ -13,13 +13,17 @@ const PlanetTile: FC<{
   polygon: PlanetTilePoint[];
 }> = ({ center, polygon, ...props }) => {
   const {
-    planet: { biomes, elevationOffset, elevationScale, noiseMin, radius },
-  } = useSettings();
+    biomes,
+    elevationOffset,
+    elevationScale,
+    noiseMin,
+    radius,
+  } = usePlanet();
 
-  const color = useMemo(
-    () => biomes.find((biome) => center.noise <= biome.noiseMax)?.color,
-    [biomes, center.noise]
-  );
+  const biome = useMemo(() => biomes.find((b) => center.noise <= b.noiseMax), [
+    biomes,
+    center.noise,
+  ]);
 
   const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
     polygon,
@@ -73,9 +77,9 @@ const PlanetTile: FC<{
     [center.position, polygonPositions]
   );
 
-  const ref = useUpdate<Mesh<ConeGeometry>>(
-    ({ geometry: { vertices } }) => {
-      const tile = getTile(vertices);
+  const ref = useUpdate<Mesh<ConeGeometry, Material>>(
+    ({ geometry }) => {
+      const tile = getTile(geometry.vertices);
       applyPolygon(tile);
       applyElevation(tile);
     },
@@ -84,8 +88,8 @@ const PlanetTile: FC<{
 
   return (
     <mesh name="PlanetTile" {...props} ref={ref}>
-      <meshStandardMaterial color={color} />
       <coneGeometry args={[1, 1, polygon.length]} />
+      <meshLambertMaterial color={biome?.color} />
     </mesh>
   );
 };

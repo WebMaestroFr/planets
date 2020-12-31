@@ -26,5 +26,5 @@ export const defaultSettings: SettingsContext = {
 
 export const Settings = createContext<SettingsContext>(defaultSettings);
 
-const Context = () => useContext(Settings);
-export default Context;
+const useSettings = () => useContext(Settings);
+export default useSettings;
