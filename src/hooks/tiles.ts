@@ -25,8 +25,8 @@ export function useTiles(settings: PlanetSettings) {
       new PoissonDiskSampling(
         {
           shape: [1.0, 1.0],
-          minDistance: settings.minDistance,
-          tries: settings.tries,
+          minDistance: Math.max(settings.minDistance, 0.01),
+          tries: Math.max(settings.tries, 2),
         },
         seedrandom(settings.seed)
       ),
