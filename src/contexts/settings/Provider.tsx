@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { defaultSettings, Settings } from "./index";
+import { DEFAULT_SETTINGS, Settings } from "./index";
 import PlanetForm from "../../components/Planet/Form";
 import { PlanetSettings } from "../../objects/planet/planet";
 
@@ -30,7 +30,7 @@ function useDebounce<T>(
 
 export const SettingsProvider: FC = ({ children, ...props }) => {
   const [debouncedPlanet, planet, setPlanet] = useDebounce<PlanetSettings>(
-    defaultSettings["planet"],
+    DEFAULT_SETTINGS["planet"],
     400
   );
 

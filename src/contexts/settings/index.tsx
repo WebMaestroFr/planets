@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { SettingsContext } from "./settings";
 
-export const defaultSettings: SettingsContext = {
+export const DEFAULT_SETTINGS: SettingsContext = {
   planet: {
     biomes: [
       { color: "steelblue", noiseMax: 0 },
@@ -24,7 +24,7 @@ export const defaultSettings: SettingsContext = {
   },
 };
 
-export const Settings = createContext<SettingsContext>(defaultSettings);
+export const Settings = createContext<SettingsContext>(DEFAULT_SETTINGS);
 
 const useSettings = () => useContext(Settings);
 export default useSettings;

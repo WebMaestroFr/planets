@@ -17,12 +17,7 @@ import {
   SphericalCoordinates,
 } from "../objects/planet/planet";
 
-export function useTiles({
-  minDistance,
-  noiseRadius,
-  seed,
-  tries,
-}: PlanetSettings) {
+export function useTiles(settings: PlanetSettings) {
   const [tiles, setTiles] = useState<PlanetTile[]>([]);
 
   const poisson = useMemo(
@@ -30,21 +25,21 @@ export function useTiles({
       new PoissonDiskSampling(
         {
           shape: [1.0, 1.0],
-          minDistance,
-          tries,
+          minDistance: settings.minDistance,
+          tries: settings.tries,
         },
-        seedrandom(seed)
+        seedrandom(settings.seed)
       ),
-    [minDistance, seed, tries]
+    [settings]
   );
 
-  const simplex = useMemo(() => new SimplexNoise(seed), [seed]);
+  const simplex = useMemo(() => new SimplexNoise(settings.seed), [settings]);
   const noise = useCallback(
     (point: Vector3) => {
-      const { x, y, z } = point.clone().setLength(noiseRadius);
+      const { x, y, z } = point.clone().setLength(settings.noiseRadius);
       return simplex.noise3D(x, y, z);
     },
-    [noiseRadius, simplex]
+    [settings, simplex]
   );
 
   const toTilePoint = useCallback(

@@ -27,13 +27,15 @@ export const PlanetForm: FC<{
   const onChange = useCallback(
     (key: string) => ({
       currentTarget: { value },
-    }: ChangeEvent<HTMLInputElement>) =>
-      onUpdate((prevSettings) => ({ ...prevSettings, [key]: value })),
+    }: ChangeEvent<HTMLInputElement>) => {
+      onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
+    },
     [onUpdate]
   );
   const onValueChange = useCallback(
-    (key: string) => (value: number) =>
-      onUpdate((prevSettings) => ({ ...prevSettings, [key]: value })),
+    (key: string) => (value: number) => {
+      onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
+    },
     [onUpdate]
   );
   return (
