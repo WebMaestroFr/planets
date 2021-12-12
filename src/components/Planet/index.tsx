@@ -14,7 +14,7 @@ export const Planet: FC<{ settings: PlanetSettings }> = ({ settings }) => {
 
   useFrame(() => {
     if (ref && ref.current) {
-      ref.current.rotation.y += 0.005;
+      ref.current.rotation.y -= 0.005;
     }
   });
 
