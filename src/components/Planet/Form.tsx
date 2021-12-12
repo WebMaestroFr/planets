@@ -24,7 +24,7 @@ export const PlanetForm: FC<{
     tries,
   },
 }) => {
-  const onChange = useCallback(
+  const handleChange = useCallback(
     (key: string) => ({
       currentTarget: { value },
     }: ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ export const PlanetForm: FC<{
     },
     [onUpdate]
   );
-  const onValueChange = useCallback(
+  const handleValueChange = useCallback(
     (key: string) => (value: number) => {
       onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
     },
@@ -44,14 +44,14 @@ export const PlanetForm: FC<{
         <InputGroup
           defaultValue={seed}
           fill={true}
-          onChange={onChange("seed")}
+          onChange={handleChange("seed")}
         />
       </FormGroup>
       <FormGroup className="PlanetForm-radius" label="Radius">
         <NumericInput
           fill={true}
           min={0}
-          onValueChange={onValueChange("radius")}
+          onValueChange={handleValueChange("radius")}
           value={radius}
         />
       </FormGroup>
@@ -63,7 +63,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={0.01}
           minorStepSize={null}
-          onValueChange={onValueChange("minDistance")}
+          onValueChange={handleValueChange("minDistance")}
           stepSize={0.01}
           value={minDistance}
         />
@@ -73,7 +73,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={2}
           minorStepSize={null}
-          onValueChange={onValueChange("tries")}
+          onValueChange={handleValueChange("tries")}
           value={tries}
         />
       </FormGroup>
@@ -82,7 +82,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={0}
           minorStepSize={null}
-          onValueChange={onValueChange("noiseRadius")}
+          onValueChange={handleValueChange("noiseRadius")}
           stepSize={0.1}
           value={noiseRadius}
         />
@@ -92,7 +92,7 @@ export const PlanetForm: FC<{
           labelStepSize={0.5}
           max={1}
           min={-1}
-          onChange={onValueChange("noiseMin")}
+          onChange={handleValueChange("noiseMin")}
           stepSize={0.1}
           value={noiseMin}
         />
@@ -105,7 +105,7 @@ export const PlanetForm: FC<{
           labelStepSize={0.25}
           max={1}
           min={0}
-          onChange={onValueChange("elevationOffset")}
+          onChange={handleValueChange("elevationOffset")}
           stepSize={0.01}
           value={elevationOffset}
         />
@@ -115,7 +115,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={0}
           minorStepSize={null}
-          onValueChange={onValueChange("elevationScale")}
+          onValueChange={handleValueChange("elevationScale")}
           stepSize={0.1}
           value={elevationScale}
         />

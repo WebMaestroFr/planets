@@ -20,10 +20,13 @@ const PlanetTile: FC<{
     radius,
   } = usePlanet();
 
-  const biome = useMemo(() => biomes.find((b) => center.noise <= b.noiseMax), [
-    biomes,
-    center.noise,
-  ]);
+  const biome = useMemo(
+    () =>
+      biomes.find(
+        (b) => center.noise <= noiseMin + b.noiseMax * (1 - noiseMin)
+      ),
+    [biomes, center.noise, noiseMin]
+  );
 
   const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
     polygon,
