@@ -2,8 +2,9 @@ import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
 import { ConeGeometry, Material, Mesh, Vector3 } from "three";
 import { usePlanet } from ".";
-import { getTile } from "../../objects/planet";
+import { getTile, setTile } from "../../objects/planet";
 import {
+  PlanetBiome,
   PlanetTilePoint,
   PlanetTilePolygon,
 } from "../../objects/planet/planet";
@@ -20,19 +21,20 @@ const PlanetTile: FC<{
     radius,
   } = usePlanet();
 
-  const biome = useMemo(
+  const biome = useMemo<PlanetBiome>(
     () =>
       biomes.find(
         (b) => center.noise <= noiseMin + b.noiseMax * (1 - noiseMin)
-      ),
+      ) || biomes[0],
     [biomes, center.noise, noiseMin]
   );
 
-  const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
-    polygon,
-  ]);
+  const polygonNoises = useMemo<number[]>(
+    () => polygon.map((point) => point.noise),
+    [polygon]
+  );
 
-  const polygonPositions = useMemo(
+  const polygonPositions = useMemo<Vector3[]>(
     () => polygon.map((point) => point.position),
     [polygon]
   );
@@ -73,7 +75,11 @@ const PlanetTile: FC<{
     (tile: PlanetTilePolygon) => {
       tile.origin.set(0, 0, 0);
       tile.center.copy(center.position);
-      for (let index = 0; index < tile.polygon.length; index++) {
+      for (
+        let index = 0;
+        index < tile.polygon.length && index < polygonPositions.length;
+        index++
+      ) {
         tile.polygon[index].copy(polygonPositions[index]);
       }
     },
@@ -82,9 +88,10 @@ const PlanetTile: FC<{
 
   const ref = useUpdate<Mesh<ConeGeometry, Material>>(
     ({ geometry }) => {
-      const tile = getTile(geometry.vertices);
+      const tile = getTile(geometry);
       applyPolygon(tile);
       applyElevation(tile);
+      setTile(geometry, tile);
     },
     [applyElevation, applyPolygon]
   );

@@ -16,7 +16,7 @@ export const DEFAULT_SETTINGS: SettingsContext = {
     elevationScale: 1,
     noiseMin: 0,
     noiseRadius: 1,
-    minDistance: 0.02,
+    minDistance: 0.04,
     position: [0, 0, 0],
     radius: 8,
     seed: Date.now().toString(),

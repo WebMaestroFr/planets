@@ -3,12 +3,17 @@ import { Vector3 } from "three";
 export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
 
+export interface PlanetBiome {
+  color: string;
+  noiseMax: number;
+}
+
 export interface PlanetProps {
   settings: PlanetSettings;
 }
 
 export interface PlanetSettings {
-  biomes: { color: string; noiseMax: number }[];
+  biomes: PlanetBiome[];
   elevationOffset: number;
   elevationScale: number;
   noiseMin: number;

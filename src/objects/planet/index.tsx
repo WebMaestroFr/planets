@@ -1,15 +1,40 @@
-import { MathUtils, Vector3 } from "three";
+import _ from "lodash";
+import {
+  BufferGeometry,
+  Float32BufferAttribute,
+  MathUtils,
+  Vector3,
+} from "three";
 import {
   GeographicalCoordinates,
   PlanetTilePolygon,
   SphericalCoordinates,
 } from "./planet";
 
-export const getTile = (vertices: Vector3[]): PlanetTilePolygon => ({
-  center: vertices[vertices.length - 1],
-  origin: vertices[0],
-  polygon: vertices.slice(1, vertices.length - 1),
-});
+// TO DO: This doesn't work since vertices are not indexed as expected...
+
+export const getTile = (geometry: BufferGeometry): PlanetTilePolygon => {
+  const positionsArray = geometry.toNonIndexed().getAttribute("position").array;
+  const vertices = _.chunk(positionsArray, 3);
+  return {
+    center: new Vector3(...vertices[vertices.length - 1]),
+    origin: new Vector3(...vertices[0]),
+    polygon: vertices
+      .slice(1, vertices.length - 1)
+      .map((position) => new Vector3(...position)),
+  };
+};
+
+export const setTile = (geometry: BufferGeometry, tile: PlanetTilePolygon) => {
+  const positions = [];
+  positions.push(tile.origin.x, tile.origin.y, tile.origin.z);
+  for (const { x, y, z } of tile.polygon) {
+    positions.push(x, y, z);
+  }
+  positions.push(tile.center.x, tile.center.y, tile.center.z);
+  const attribute = new Float32BufferAttribute(positions, 3);
+  geometry.setAttribute("position", attribute);
+};
 
 export const toGeographicalCoordinates = ([
   phi,
