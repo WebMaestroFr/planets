@@ -15,7 +15,7 @@ export const AppScene: FC = () => {
 
   return (
     <ControlsProvider>
-      <pointLight
+      <directionalLight
         position={[
           -settings.planet.radius,
           settings.planet.radius,

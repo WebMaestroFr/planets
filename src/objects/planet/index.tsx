@@ -50,14 +50,14 @@ export const setTile = (geometry: BufferGeometry, tile: PlanetTilePolygon) => {
         uv: [0, 0],
       },
       {
-        position: [next.x, next.y, next.z],
-        normal: [normalBase.x, normalBase.y, normalBase.z],
-        uv: [1, 0],
-      },
-      {
         position: [x, y, z],
         normal: [normalBase.x, normalBase.y, normalBase.z],
         uv: [0, 1],
+      },
+      {
+        position: [next.x, next.y, next.z],
+        normal: [normalBase.x, normalBase.y, normalBase.z],
+        uv: [1, 0],
       },
       {
         position: [tile.center.x, tile.center.y, tile.center.z],

@@ -100,7 +100,7 @@ const PlanetTile: FC<{
   return (
     <mesh name="PlanetTile" {...props} ref={ref}>
       <bufferGeometry />
-      <meshLambertMaterial color={biome?.color} />
+      <meshStandardMaterial color={biome?.color} />
     </mesh>
   );
 };
