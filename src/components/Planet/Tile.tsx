@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
-import { ConeGeometry, Material, Mesh, Vector3 } from "three";
+import { BufferGeometry, Material, Mesh, Vector3 } from "three";
 import { usePlanet } from ".";
 import { getTile, setTile } from "../../objects/planet";
 import {
@@ -18,6 +18,7 @@ const PlanetTile: FC<{
     elevationOffset,
     elevationScale,
     noiseMin,
+    origin,
     radius,
   } = usePlanet();
 
@@ -73,7 +74,7 @@ const PlanetTile: FC<{
 
   const applyPolygon = useCallback(
     (tile: PlanetTilePolygon) => {
-      tile.origin.set(0, 0, 0);
+      tile.origin.set(...origin);
       tile.center.copy(center.position);
       for (
         let index = 0;
@@ -86,9 +87,9 @@ const PlanetTile: FC<{
     [center.position, polygonPositions]
   );
 
-  const ref = useUpdate<Mesh<ConeGeometry, Material>>(
+  const ref = useUpdate<Mesh<BufferGeometry, Material>>(
     ({ geometry }) => {
-      const tile = getTile(geometry);
+      const tile = getTile(origin, center, polygon);
       applyPolygon(tile);
       applyElevation(tile);
       setTile(geometry, tile);
@@ -98,7 +99,7 @@ const PlanetTile: FC<{
 
   return (
     <mesh name="PlanetTile" {...props} ref={ref}>
-      <coneGeometry args={[1, 1, polygon.length]} />
+      <bufferGeometry />
       <meshLambertMaterial color={biome?.color} />
     </mesh>
   );

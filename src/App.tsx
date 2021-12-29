@@ -18,10 +18,11 @@ export const AppScene: FC = () => {
       <pointLight
         position={[
           -settings.planet.radius,
-          -settings.planet.radius,
+          settings.planet.radius,
           -settings.planet.radius,
         ]}
       />
+      <ambientLight intensity={0.2} />
       <Planet settings={settings.planet} />
     </ControlsProvider>
   );

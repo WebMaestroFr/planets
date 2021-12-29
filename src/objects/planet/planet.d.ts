@@ -16,9 +16,10 @@ export interface PlanetSettings {
   biomes: PlanetBiome[];
   elevationOffset: number;
   elevationScale: number;
+  minDistance: number;
   noiseMin: number;
   noiseRadius: number;
-  minDistance: number;
+  origin: [number, number, number];
   position: [number, number, number];
   radius: number;
   seed: string;
