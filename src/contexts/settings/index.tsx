@@ -14,7 +14,7 @@ export const DEFAULT_SETTINGS: SettingsContext = {
     ],
     elevationOffset: 1 / 2,
     elevationScale: 1,
-    minDistance: 0.04,
+    minDistance: 0.02,
     noiseMin: 0,
     noiseRadius: 1,
     origin: [0, 0, 0],
