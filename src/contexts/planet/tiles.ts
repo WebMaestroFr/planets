@@ -1,10 +1,9 @@
 import { geoDelaunay } from "d3-geo-voronoi";
 import PoissonDiskSampling from "poisson-disk-sampling";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import seedrandom from "seedrandom";
-import SimplexNoise from "simplex-noise";
-import { Vector3 } from "three";
 import {
+  toCartesianCoordinates,
   toGeographicalCoordinates,
   toSphericalCoordinates,
   toSphericalDistribution,
@@ -12,9 +11,7 @@ import {
 import {
   GeographicalCoordinates,
   PlanetSettings,
-  PlanetTilePoint,
   PlanetTileProps,
-  SphericalCoordinates,
 } from "./planet";
 
 export function useTiles(settings: PlanetSettings) {
@@ -33,24 +30,6 @@ export function useTiles(settings: PlanetSettings) {
     [settings]
   );
 
-  const simplex = useMemo(() => new SimplexNoise(settings.seed), [settings]);
-  const noise = useCallback(
-    (point: Vector3) => {
-      const { x, y, z } = point.clone().setLength(settings.noiseRadius);
-      return simplex.noise3D(x, y, z);
-    },
-    [settings, simplex]
-  );
-
-  const toTilePoint = useCallback(
-    ([phi, theta]: SphericalCoordinates): PlanetTilePoint => {
-      const position = new Vector3();
-      position.setFromSphericalCoords(1, phi, theta);
-      return { noise: noise(position), position };
-    },
-    [noise]
-  );
-
   useEffect(() => {
     const sphericalCoordinates = poisson.fill().map(toSphericalDistribution);
     const geographicalCoordinates = sphericalCoordinates.map(
@@ -62,10 +41,10 @@ export function useTiles(settings: PlanetSettings) {
     } = geoDelaunay(geographicalCoordinates);
     const points = delaunay.centers
       .map(toSphericalCoordinates)
-      .map(toTilePoint);
+      .map(toCartesianCoordinates);
     const timeKey = Date.now().toString();
     const nextTiles = delaunay.polygons.map((polygon, index) => {
-      const center = toTilePoint(sphericalCoordinates[index]);
+      const center = toCartesianCoordinates(sphericalCoordinates[index]);
       return {
         center,
         key: `${timeKey}-${index}`,
@@ -73,7 +52,7 @@ export function useTiles(settings: PlanetSettings) {
       };
     });
     setTiles(nextTiles);
-  }, [poisson, toTilePoint]);
+  }, [poisson]);
 
   return tiles;
 }

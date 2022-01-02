@@ -4,6 +4,7 @@ import {
   GeographicalCoordinates,
   PlanetSettings,
   SphericalCoordinates,
+  VectorCoordinates,
 } from "./planet";
 
 export const DEFAULT_PLANET: PlanetSettings = {
@@ -52,3 +53,14 @@ export const toSphericalDistribution = ([u, v]: [
   Math.PI - Math.acos(2 * v - 1),
   2 * Math.PI * u - Math.PI,
 ];
+export const toCartesianCoordinates = ([
+  phi,
+  theta,
+]: SphericalCoordinates): VectorCoordinates => {
+  const sinPhiRadius = Math.sin(phi);
+  return [
+    sinPhiRadius * Math.sin(theta),
+    Math.cos(phi),
+    sinPhiRadius * Math.cos(theta),
+  ];
+};

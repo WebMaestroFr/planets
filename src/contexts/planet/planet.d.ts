@@ -23,13 +23,8 @@ export interface PlanetSettings {
 
 export interface PlanetTileProps {
   key: string;
-  center: PlanetTilePoint;
-  polygon: PlanetTilePoint[];
-}
-
-export interface PlanetTilePoint {
-  noise: number;
-  position: Vector3;
+  center: VectorCoordinates;
+  polygon: VectorCoordinates[];
 }
 
 export interface PlanetTileBiome {
