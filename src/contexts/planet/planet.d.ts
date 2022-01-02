@@ -2,11 +2,7 @@ import { Vector3 } from "three";
 
 export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
-
-export interface PlanetBiome {
-  color: string;
-  noiseMax: number;
-}
+export type VectorCoordinates = [number, number, number];
 
 export interface PlanetProps {
   settings: PlanetSettings;
@@ -19,16 +15,15 @@ export interface PlanetSettings {
   minDistance: number;
   noiseMin: number;
   noiseRadius: number;
-  origin: [number, number, number];
-  position: [number, number, number];
+  position: VectorCoordinates;
   radius: number;
   seed: string;
   tries: number;
 }
 
-export interface PlanetTile {
-  center: PlanetTilePoint;
+export interface PlanetTileProps {
   key: string;
+  center: PlanetTilePoint;
   polygon: PlanetTilePoint[];
 }
 
@@ -37,8 +32,7 @@ export interface PlanetTilePoint {
   position: Vector3;
 }
 
-export interface PlanetTilePolygon {
-  center: Vector3;
-  origin: Vector3;
-  polygon: Vector3[];
+export interface PlanetTileBiome {
+  color: string;
+  noiseMax: number;
 }

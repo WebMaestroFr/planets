@@ -1,28 +1,26 @@
-import React, { createContext, FC, useContext, useRef } from "react";
+import React, { FC, useRef } from "react";
 import { useFrame } from "react-three-fiber";
 import { Group } from "three";
-import { useTiles } from "../../hooks/tiles";
-import { PlanetSettings } from "../../objects/planet/planet";
+import { PlanetContext } from "../../contexts/planet";
+import { PlanetProps } from "../../contexts/planet/planet";
+import { useTiles } from "../../contexts/planet/tiles";
 import Tile from "./Tile";
 
-const PlanetContext = createContext<PlanetSettings>({} as PlanetSettings);
-export const usePlanet = () => useContext(PlanetContext);
-
-export const Planet: FC<{ settings: PlanetSettings }> = ({ settings }) => {
+export const Planet: FC<PlanetProps> = ({ settings }) => {
   const ref = useRef<Group>();
   const tiles = useTiles(settings);
 
   useFrame(() => {
     if (ref && ref.current) {
-      ref.current.rotation.y += 0.005;
+      ref.current.rotation.y = Date.now() / 1000 / 5;
     }
   });
 
   return (
     <group name="Planet" ref={ref}>
       <PlanetContext.Provider value={settings}>
-        {tiles.map((tile) => (
-          <Tile key={tile.key} center={tile.center} polygon={tile.polygon} />
+        {tiles.map((tileProps) => (
+          <Tile {...tileProps} />
         ))}
       </PlanetContext.Provider>
     </group>

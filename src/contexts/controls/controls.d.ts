@@ -10,7 +10,3 @@ declare global {
     }
   }
 }
-
-export interface ControlsContext {}
-
-export interface ControlsProps {}

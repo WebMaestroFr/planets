@@ -8,17 +8,17 @@ import {
   toGeographicalCoordinates,
   toSphericalCoordinates,
   toSphericalDistribution,
-} from "../objects/planet";
+} from ".";
 import {
   GeographicalCoordinates,
   PlanetSettings,
-  PlanetTile,
   PlanetTilePoint,
+  PlanetTileProps,
   SphericalCoordinates,
-} from "../objects/planet/planet";
+} from "./planet";
 
 export function useTiles(settings: PlanetSettings) {
-  const [tiles, setTiles] = useState<PlanetTile[]>([]);
+  const [tiles, setTiles] = useState<PlanetTileProps[]>([]);
 
   const poisson = useMemo(
     () =>
