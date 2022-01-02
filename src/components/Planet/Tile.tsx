@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useCallback, useMemo } from "react";
 import { useUpdate } from "react-three-fiber";
 import {
   BufferGeometry,
@@ -10,94 +10,90 @@ import {
 import { usePlanet } from "../../contexts/planet";
 import { PlanetTileBiome, PlanetTileProps } from "../../contexts/planet/planet";
 
-const PlanetTile: FC<PlanetTileProps> = ({
-  center,
-  key,
-  polygon,
-  ...props
-}) => {
+const PlanetTile: FC<PlanetTileProps> = ({ center, polygon, ...props }) => {
   const planet = usePlanet();
 
+  const getElevation = useCallback(
+    (noise: number) =>
+      planet.radius + Math.max(planet.noiseMin, noise) * planet.elevationScale,
+    [planet.radius, planet.noiseMin, planet.elevationScale]
+  );
   const computedCenter = useMemo(() => {
-    const length =
-      planet.radius +
-      Math.max(planet.noiseMin, center.noise) * planet.elevationScale;
+    const length = getElevation(center.noise);
     return center.position.clone().setLength(length);
-  }, [center, planet.radius, planet.noiseMin, planet.elevationScale]);
+  }, [center, getElevation]);
   const computedPolygon = useMemo(() => {
     const centerLength = computedCenter.length();
-    return polygon
-      .map(({ noise, position }) => {
-        const vertex = position.clone();
-        if (center.noise <= planet.noiseMin) {
-          vertex.setLength(centerLength);
-        } else {
-          const elevationNoise =
-            center.noise * planet.elevationOffset +
-            noise * (1 - planet.elevationOffset);
-          const elevation =
-            planet.radius +
-            Math.max(planet.noiseMin, elevationNoise) * planet.elevationScale;
-          vertex.setLength(elevation);
-        }
-        return vertex;
-      })
-      .reduce<
-        {
-          position: [number, number, number];
-          normal: [number, number, number];
-          uv: [number, number];
-        }[]
-      >((v, { x, y, z }, index, vertices) => {
-        const next =
-          index === vertices.length - 1 ? vertices[0] : vertices[index + 1];
-        const normalBase = new Vector3(x, y, z);
-        normalBase.add(next).divideScalar(2).sub(computedCenter).normalize();
-        const normalTop = new Vector3(x, y, z);
-        normalTop.add(next).add(computedCenter).divideScalar(3).normalize();
-        return [
-          ...v,
-          {
-            position: [0, 0, 0],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [0, 0],
-          },
-          {
-            position: [x, y, z],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [0, 1],
-          },
-          {
-            position: [next.x, next.y, next.z],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [1, 0],
-          },
-          {
-            position: [computedCenter.x, computedCenter.y, computedCenter.z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [1, 1],
-          },
-          {
-            position: [next.x, next.y, next.z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [1, 0],
-          },
-          {
-            position: [x, y, z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [0, 1],
-          },
-        ];
-      }, []);
+    return polygon.map(({ noise, position }) => {
+      const vertex = position.clone();
+      if (center.noise <= planet.noiseMin) {
+        vertex.setLength(centerLength);
+      } else {
+        const elevationNoise =
+          center.noise * planet.elevationOffset +
+          noise * (1 - planet.elevationOffset);
+        const elevation = getElevation(elevationNoise);
+        vertex.setLength(elevation);
+      }
+      return vertex;
+    });
   }, [
     center.noise,
     computedCenter,
+    getElevation,
     planet.elevationOffset,
-    planet.elevationScale,
     planet.noiseMin,
-    planet.radius,
     polygon,
   ]);
+  const computedVertices = useMemo(() => {
+    return computedPolygon.reduce<
+      {
+        position: [number, number, number];
+        normal: [number, number, number];
+        uv: [number, number];
+      }[]
+    >((v, { x, y, z }, index, vertices) => {
+      const next =
+        index === vertices.length - 1 ? vertices[0] : vertices[index + 1];
+      const normalBase = new Vector3(x, y, z);
+      normalBase.add(next).divideScalar(2).sub(computedCenter).normalize();
+      const normalTop = new Vector3(x, y, z);
+      normalTop.add(next).add(computedCenter).divideScalar(3).normalize();
+      return [
+        ...v,
+        {
+          position: [0, 0, 0],
+          normal: [normalBase.x, normalBase.y, normalBase.z],
+          uv: [0, 0],
+        },
+        {
+          position: [x, y, z],
+          normal: [normalBase.x, normalBase.y, normalBase.z],
+          uv: [0, 1],
+        },
+        {
+          position: [next.x, next.y, next.z],
+          normal: [normalBase.x, normalBase.y, normalBase.z],
+          uv: [1, 0],
+        },
+        {
+          position: [computedCenter.x, computedCenter.y, computedCenter.z],
+          normal: [normalTop.x, normalTop.y, normalTop.z],
+          uv: [1, 1],
+        },
+        {
+          position: [next.x, next.y, next.z],
+          normal: [normalTop.x, normalTop.y, normalTop.z],
+          uv: [1, 0],
+        },
+        {
+          position: [x, y, z],
+          normal: [normalTop.x, normalTop.y, normalTop.z],
+          uv: [0, 1],
+        },
+      ];
+    }, []);
+  }, [computedCenter, computedPolygon]);
 
   const biome = useMemo<PlanetTileBiome>(
     () =>
@@ -108,22 +104,28 @@ const PlanetTile: FC<PlanetTileProps> = ({
     [planet.biomes, center.noise, planet.noiseMin]
   );
 
-  const ref = useUpdate<Mesh<BufferGeometry, Material>>(({ geometry }) => {
-    const positions = [];
-    const normals = [];
-    const uvs = [];
-    for (const vertex of computedPolygon) {
-      positions.push(...vertex.position);
-      normals.push(...vertex.normal);
-      uvs.push(...vertex.uv);
-    }
-    geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
-    geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
-    geometry.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
-  }, []);
+  const ref = useUpdate<Mesh<BufferGeometry, Material>>(
+    ({ geometry }) => {
+      const positions = [];
+      const normals = [];
+      const uvs = [];
+      for (const vertex of computedVertices) {
+        positions.push(...vertex.position);
+        normals.push(...vertex.normal);
+        uvs.push(...vertex.uv);
+      }
+      geometry.setAttribute(
+        "position",
+        new Float32BufferAttribute(positions, 3)
+      );
+      geometry.setAttribute("normal", new Float32BufferAttribute(normals, 3));
+      geometry.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
+    },
+    [computedVertices]
+  );
 
   return (
-    <mesh key={key} name="PlanetTile" ref={ref} {...props}>
+    <mesh name="PlanetTile" ref={ref} {...props}>
       <bufferGeometry />
       <meshStandardMaterial color={biome?.color} />
     </mesh>

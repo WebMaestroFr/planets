@@ -19,8 +19,8 @@ export const Planet: FC<PlanetProps> = ({ settings }) => {
   return (
     <group name="Planet" ref={ref}>
       <PlanetContext.Provider value={settings}>
-        {tiles.map((tileProps) => (
-          <Tile {...tileProps} />
+        {tiles.map(({ key, ...tileProps }) => (
+          <Tile key={key} {...tileProps} />
         ))}
       </PlanetContext.Provider>
     </group>
