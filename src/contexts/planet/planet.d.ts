@@ -9,7 +9,6 @@ export interface PlanetProps {
 }
 
 export interface PlanetSettings {
-  biomes: PlanetBiome[];
   elevationOffset: number;
   elevationScale: number;
   minDistance: number;
@@ -25,9 +24,4 @@ export interface PlanetTileProps {
   key: string;
   center: VectorCoordinates;
   polygon: VectorCoordinates[];
-}
-
-export interface PlanetTileBiome {
-  color: string;
-  noiseMax: number;
 }

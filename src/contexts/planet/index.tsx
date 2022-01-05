@@ -8,15 +8,6 @@ import {
 } from "./planet";
 
 export const DEFAULT_PLANET: PlanetSettings = {
-  biomes: [
-    { color: "steelblue", noiseMax: 0 },
-    { color: "lemonchiffon", noiseMax: 1 / 6 },
-    { color: "yellowgreen", noiseMax: 2 / 6 },
-    { color: "forestgreen", noiseMax: 3 / 6 },
-    { color: "burlywood", noiseMax: 4 / 6 },
-    { color: "darkgrey", noiseMax: 5 / 6 },
-    { color: "snow", noiseMax: 1 },
-  ],
   elevationOffset: 1 / 2,
   elevationScale: 1,
   minDistance: 0.02,

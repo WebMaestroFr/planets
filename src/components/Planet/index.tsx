@@ -1,6 +1,7 @@
 import React, { FC, useRef } from "react";
 import { useFrame } from "react-three-fiber";
 import { Group } from "three";
+import BiomesProvider from "../../contexts/biomes/Provider";
 import { PlanetContext } from "../../contexts/planet";
 import { PlanetProps } from "../../contexts/planet/planet";
 import { useTiles } from "../../contexts/planet/tiles";
@@ -19,9 +20,11 @@ export const Planet: FC<PlanetProps> = ({ settings }) => {
   return (
     <group name="Planet" ref={ref}>
       <PlanetContext.Provider value={settings}>
-        {tiles.map(({ key, ...tileProps }) => (
-          <Tile key={key} {...tileProps} />
-        ))}
+        <BiomesProvider>
+          {tiles.map(({ key, ...tileProps }) => (
+            <Tile key={key} {...tileProps} />
+          ))}
+        </BiomesProvider>
       </PlanetContext.Provider>
     </group>
   );

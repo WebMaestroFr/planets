@@ -14,7 +14,7 @@ import {
   PlanetTileProps,
 } from "./planet";
 
-export function useTiles(settings: PlanetSettings) {
+export function useTiles({ minDistance, seed, tries }: PlanetSettings) {
   const [tiles, setTiles] = useState<PlanetTileProps[]>([]);
 
   const poisson = useMemo(
@@ -22,12 +22,12 @@ export function useTiles(settings: PlanetSettings) {
       new PoissonDiskSampling(
         {
           shape: [1.0, 1.0],
-          minDistance: Math.max(settings.minDistance, 0.01),
-          tries: Math.max(settings.tries, 2),
+          minDistance: Math.max(minDistance, 0.01),
+          tries: Math.max(tries, 2),
         },
-        seedrandom(settings.seed)
+        seedrandom(seed)
       ),
-    [settings]
+    [minDistance, seed, tries]
   );
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export function useTiles(settings: PlanetSettings) {
     const points = delaunay.centers
       .map(toSphericalCoordinates)
       .map(toCartesianCoordinates);
-    const timeKey = Date.now().toString();
+    const timeKey = Date.now();
     const nextTiles = delaunay.polygons.map((polygon, index) => {
       const center = toCartesianCoordinates(sphericalCoordinates[index]);
       return {
