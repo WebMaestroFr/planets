@@ -1,11 +1,10 @@
 import React, { FC, useCallback, useMemo } from "react";
-import { useUpdate } from "react-three-fiber";
-import { BufferGeometry, Material, Mesh, Vector3 } from "three";
+import { Vector3 } from "three";
 import useBiomes from "../../contexts/biomes";
 import { usePlanet } from "../../contexts/planet";
 import { useNoise } from "../../contexts/planet/noise";
 import { PlanetTileProps } from "../../contexts/planet/planet";
-import { useTileGeometry } from "../../contexts/planet/tileGeometry";
+import GeometryTile from "../Geometry/Tile";
 
 const PlanetTile: FC<PlanetTileProps> = ({ center, polygon, ...props }) => {
   const {
@@ -72,20 +71,6 @@ const PlanetTile: FC<PlanetTileProps> = ({ center, polygon, ...props }) => {
     polygonNoise,
   ]);
 
-  const { positions, normals, uvs } = useTileGeometry(
-    centerVertex,
-    polygonVertices
-  );
-
-  const ref = useUpdate<Mesh<BufferGeometry, Material>>(
-    ({ geometry }) => {
-      geometry.setAttribute("position", positions);
-      geometry.setAttribute("normal", normals);
-      geometry.setAttribute("uv", uvs);
-    },
-    [positions, normals, uvs]
-  );
-
   const biome = useMemo(() => biomes && biomes.getColor(center, centerNoise), [
     biomes,
     center,
@@ -93,8 +78,8 @@ const PlanetTile: FC<PlanetTileProps> = ({ center, polygon, ...props }) => {
   ]);
 
   return (
-    <mesh name="PlanetTile" ref={ref} {...props}>
-      <bufferGeometry />
+    <mesh name="PlanetTile" {...props}>
+      <GeometryTile tileCenter={centerVertex} tilePolygon={polygonVertices} />
       <meshLambertMaterial color={biome} />
     </mesh>
   );

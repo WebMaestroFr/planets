@@ -5,7 +5,7 @@ import { usePlanet } from "../planet";
 import { VectorCoordinates } from "../planet/planet";
 import { BiomesContext } from "./index";
 
-export const BiomesProvider: FC = ({ children, ...props }) => {
+export const BiomesProvider: FC = ({ children }) => {
   const { noiseMin } = usePlanet();
   const [context, setContext] = useState<CanvasRenderingContext2D | undefined>(
     undefined
@@ -65,11 +65,11 @@ export const BiomesProvider: FC = ({ children, ...props }) => {
     [biomesColors, oceanColor, noiseMin, width, height]
   );
 
-  return (
-    <BiomesContext.Provider value={context && { getColor }} {...props}>
+  return context ? (
+    <BiomesContext.Provider value={{ getColor }}>
       {children}
     </BiomesContext.Provider>
-  );
+  ) : null;
 };
 
 export default BiomesProvider;

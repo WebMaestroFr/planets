@@ -7,14 +7,12 @@ import {
   toGeographicalCoordinates,
   toSphericalCoordinates,
   toSphericalDistribution,
+  usePlanet,
 } from ".";
-import {
-  GeographicalCoordinates,
-  PlanetSettings,
-  PlanetTileProps,
-} from "./planet";
+import { GeographicalCoordinates, PlanetTileProps } from "./planet";
 
-export function useTiles({ minDistance, seed, tries }: PlanetSettings) {
+export function useTiles() {
+  const { minDistance, seed, tries } = usePlanet();
   const [tiles, setTiles] = useState<PlanetTileProps[]>([]);
 
   const poisson = useMemo(
@@ -42,7 +40,7 @@ export function useTiles({ minDistance, seed, tries }: PlanetSettings) {
     const points = delaunay.centers
       .map(toSphericalCoordinates)
       .map(toCartesianCoordinates);
-    const timeKey = Date.now();
+    const timeKey = Date.now().toString();
     const nextTiles = delaunay.polygons.map((polygon, index) => {
       const center = toCartesianCoordinates(sphericalCoordinates[index]);
       return {
