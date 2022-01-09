@@ -1,12 +1,9 @@
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Color, MathUtils } from "three";
 import biomesSrc from "../../assets/biomes.png";
-import { usePlanet } from "../planet";
-import { VectorCoordinates } from "../planet/planet";
-import { BiomesContext } from "./index";
+import { PlanetTilePoint } from "./planet";
 
-export const BiomesProvider: FC = ({ children }) => {
-  const { noiseMin } = usePlanet();
+export default function useBiomes(noiseMin: number) {
   const [context, setContext] = useState<CanvasRenderingContext2D | undefined>(
     undefined
   );
@@ -50,26 +47,23 @@ export const BiomesProvider: FC = ({ children }) => {
     }
     return undefined;
   }, [context, width, height]);
-  const getColor = useCallback(
-    (center: VectorCoordinates, centerNoise: number) => {
-      if (centerNoise <= noiseMin) {
+
+  return useCallback(
+    ({ coordinates, noise }: PlanetTilePoint) => {
+      if (noise <= noiseMin) {
         return oceanColor;
       }
-      const phi = Math.acos(MathUtils.clamp(center[1], -1, 1));
+      const phi = Math.acos(MathUtils.clamp(coordinates[1], -1, 1));
       const u = (Math.abs(phi - Math.PI / 2) / Math.PI) * 2;
-      const v = Math.abs((noiseMin + centerNoise * (1 - noiseMin)) * 2 - 1);
+      const vNoise = (noise + 1) / 2;
+      const vMin = (noiseMin + 1) / 2;
+      const v = 1 - (vNoise - vMin) / (1 - vMin);
       const sx = Math.floor(u * width);
       const sy = Math.floor(v * height);
-      return biomesColors && biomesColors[sx][sy];
+      return (
+        (biomesColors && biomesColors[sx] && biomesColors[sx][sy]) || oceanColor
+      );
     },
     [biomesColors, oceanColor, noiseMin, width, height]
   );
-
-  return context ? (
-    <BiomesContext.Provider value={{ getColor }}>
-      {children}
-    </BiomesContext.Provider>
-  ) : null;
-};
-
-export default BiomesProvider;
+}

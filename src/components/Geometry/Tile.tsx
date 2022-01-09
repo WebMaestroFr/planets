@@ -8,65 +8,79 @@ const GeometryTile: FC<
     tilePolygon: Vector3[];
   }
 > = ({ tileCenter, tilePolygon, ...props }) => {
-  const vertices = useMemo(
-    () =>
-      tilePolygon.reduce<
+  const vertices = useMemo(() => {
+    const centerNormal = tileCenter.clone().normalize();
+    const baseNormals = tilePolygon.map((vertex) =>
+      vertex.clone().sub(tileCenter).normalize()
+    );
+    const topNormals = tilePolygon.map((vertex) => vertex.clone().normalize());
+    return tilePolygon.reduce<
+      {
+        position: [number, number, number];
+        normal: [number, number, number];
+        uv: [number, number];
+      }[]
+    >((v, vertex, index, vertices) => {
+      const nextIndex = index === vertices.length - 1 ? 0 : index + 1;
+      return [
+        ...v,
         {
-          position: [number, number, number];
-          normal: [number, number, number];
-          uv: [number, number];
-        }[]
-      >((v, vertex, index, vertices) => {
-        const nextVertex =
-          index === vertices.length - 1 ? vertices[0] : vertices[index + 1];
-        const normalBase = vertex
-          .clone()
-          .add(nextVertex)
-          .divideScalar(2)
-          .sub(tileCenter)
-          .normalize();
-        const normalTop = vertex
-          .clone()
-          .add(nextVertex)
-          .add(tileCenter)
-          .divideScalar(3)
-          .normalize();
-        return [
-          ...v,
-          {
-            position: [0, 0, 0],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [0, 0],
-          },
-          {
-            position: [vertex.x, vertex.y, vertex.z],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [0, 1],
-          },
-          {
-            position: [nextVertex.x, nextVertex.y, nextVertex.z],
-            normal: [normalBase.x, normalBase.y, normalBase.z],
-            uv: [1, 0],
-          },
-          {
-            position: [tileCenter.x, tileCenter.y, tileCenter.z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [1, 1],
-          },
-          {
-            position: [nextVertex.x, nextVertex.y, nextVertex.z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [1, 0],
-          },
-          {
-            position: [vertex.x, vertex.y, vertex.z],
-            normal: [normalTop.x, normalTop.y, normalTop.z],
-            uv: [0, 1],
-          },
-        ];
-      }, []),
-    [tileCenter, tilePolygon]
-  );
+          position: [0, 0, 0],
+          normal: [-centerNormal.x, -centerNormal.y, -centerNormal.z],
+          uv: [0, 0],
+        },
+        {
+          position: [vertex.x, vertex.y, vertex.z],
+          normal: [
+            baseNormals[index].x,
+            baseNormals[index].y,
+            baseNormals[index].z,
+          ],
+          uv: [0, 1],
+        },
+        {
+          position: [
+            vertices[nextIndex].x,
+            vertices[nextIndex].y,
+            vertices[nextIndex].z,
+          ],
+          normal: [
+            baseNormals[nextIndex].x,
+            baseNormals[nextIndex].y,
+            baseNormals[nextIndex].z,
+          ],
+          uv: [1, 0],
+        },
+        {
+          position: [tileCenter.x, tileCenter.y, tileCenter.z],
+          normal: [centerNormal.x, centerNormal.y, centerNormal.z],
+          uv: [1, 1],
+        },
+        {
+          position: [
+            vertices[nextIndex].x,
+            vertices[nextIndex].y,
+            vertices[nextIndex].z,
+          ],
+          normal: [
+            topNormals[nextIndex].x,
+            topNormals[nextIndex].y,
+            topNormals[nextIndex].z,
+          ],
+          uv: [1, 0],
+        },
+        {
+          position: [vertex.x, vertex.y, vertex.z],
+          normal: [
+            topNormals[index].x,
+            topNormals[index].y,
+            topNormals[index].z,
+          ],
+          uv: [0, 1],
+        },
+      ];
+    }, []);
+  }, [tileCenter, tilePolygon]);
 
   const positionsAttribute = useMemo(() => {
     const positions = vertices.reduce<number[]>((coordinates, vertex) => {

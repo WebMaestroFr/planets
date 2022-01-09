@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Color, Vector3 } from "three";
 
 export type GeographicalCoordinates = [number, number];
 export type SphericalCoordinates = [number, number];
@@ -20,8 +20,19 @@ export interface PlanetSettings {
   tries: number;
 }
 
-export interface PlanetTileProps {
-  key: string;
+export interface PlanetTile {
   center: VectorCoordinates;
   polygon: VectorCoordinates[];
+}
+
+export interface PlanetTilePoint {
+  coordinates: VectorCoordinates;
+  noise: number;
+}
+
+export interface PlanetTileProps {
+  key: string;
+  biome: Color;
+  center: PlanetTilePoint;
+  polygon: PlanetTilePoint[];
 }

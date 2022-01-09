@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import SimplexNoise from "simplex-noise";
 import { PlanetSettings, VectorCoordinates } from "./planet";
 
-export function useNoise(
+export default function useNoise(
   seed: PlanetSettings["seed"],
   layers: { scalar: number; weight: number }[]
 ) {
