@@ -8,7 +8,7 @@ import {
 } from "./planet";
 
 export const DEFAULT_PLANET: PlanetSettings = {
-  elevationOffset: 1 / 2,
+  elevationOffset: 0,
   elevationScale: 1,
   minDistance: 0.02,
   noiseMin: 0,

@@ -16,14 +16,10 @@ export const AppScene: FC = () => {
   return (
     <ControlsProvider>
       <directionalLight
-        intensity={0.8}
-        position={[
-          -settings.planet.radius,
-          settings.planet.radius,
-          -settings.planet.radius,
-        ]}
+        intensity={0.67}
+        position={[-settings.planet.radius, settings.planet.radius, 0]}
       />
-      <ambientLight intensity={0.2} />
+      <ambientLight intensity={0.33} />
       <Planet settings={settings.planet} />
     </ControlsProvider>
   );
