@@ -5,9 +5,10 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { DEFAULT_SETTINGS, Settings } from "./index";
 import PlanetForm from "../../components/Planet/Form";
-import { PlanetSettings } from "../../objects/planet/planet";
+import { PlanetSettings } from "../planet/planet";
+import { DEFAULT_PLANET } from "../planet";
+import { SettingsContext } from "./index";
 
 function useDebounce<T>(
   initialValue: T,
@@ -30,17 +31,17 @@ function useDebounce<T>(
 
 export const SettingsProvider: FC = ({ children, ...props }) => {
   const [debouncedPlanet, planet, setPlanet] = useDebounce<PlanetSettings>(
-    DEFAULT_SETTINGS["planet"],
+    DEFAULT_PLANET,
     400
   );
 
   return (
-    <Settings.Provider value={{ planet: debouncedPlanet }} {...props}>
+    <SettingsContext.Provider value={{ planet: debouncedPlanet }} {...props}>
       {children}
       <div className="Settings">
         <PlanetForm onUpdate={setPlanet} settings={planet} />
       </div>
-    </Settings.Provider>
+    </SettingsContext.Provider>
   );
 };
 

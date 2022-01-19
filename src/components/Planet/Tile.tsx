@@ -1,98 +1,58 @@
 import React, { FC, useCallback, useMemo } from "react";
-import { useUpdate } from "react-three-fiber";
-import { ConeGeometry, Material, Mesh, Vector3 } from "three";
-import { usePlanet } from ".";
-import { getTile } from "../../objects/planet";
-import {
-  PlanetTilePoint,
-  PlanetTilePolygon,
-} from "../../objects/planet/planet";
+import { Vector3 } from "three";
+import { usePlanet } from "../../contexts/planet";
+import { PlanetTileProps } from "../../contexts/planet/planet";
+import GeometryTile from "../Geometry/Tile";
 
-const PlanetTile: FC<{
-  center: PlanetTilePoint;
-  polygon: PlanetTilePoint[];
-}> = ({ center, polygon, ...props }) => {
-  const {
-    biomes,
-    elevationOffset,
-    elevationScale,
-    noiseMin,
-    radius,
-  } = usePlanet();
+const PlanetTile: FC<PlanetTileProps> = ({
+  center,
+  polygon,
+  biome,
+  ...props
+}) => {
+  const { elevationOffset, elevationScale, noiseMin, radius } = usePlanet();
 
-  const biome = useMemo(
-    () =>
-      biomes.find(
-        (b) => center.noise <= noiseMin + b.noiseMax * (1 - noiseMin)
-      ),
-    [biomes, center.noise, noiseMin]
+  const getElevation = useCallback(
+    (noise: number) => radius + Math.max(noiseMin, noise) * elevationScale,
+    [radius, noiseMin, elevationScale]
   );
 
-  const polygonNoises = useMemo(() => polygon.map((point) => point.noise), [
+  const centerElevation = useMemo(() => getElevation(center.noise), [
+    center.noise,
+    getElevation,
+  ]);
+
+  const centerVertex = useMemo(() => {
+    const vertex = new Vector3(...center.coordinates);
+    return vertex.setLength(centerElevation);
+  }, [center, centerElevation]);
+  const polygonVertices = useMemo(() => {
+    return polygon.map((point, index) => {
+      const vertex = new Vector3(...point.coordinates);
+      if (center.noise <= noiseMin) {
+        vertex.setLength(centerElevation);
+      } else {
+        const elevationNoise =
+          center.noise * elevationOffset +
+          polygon[index].noise * (1 - elevationOffset);
+        const elevation = getElevation(elevationNoise);
+        vertex.setLength(elevation);
+      }
+      return vertex;
+    });
+  }, [
+    centerElevation,
+    center.noise,
+    getElevation,
+    elevationOffset,
+    noiseMin,
     polygon,
   ]);
 
-  const polygonPositions = useMemo(
-    () => polygon.map((point) => point.position),
-    [polygon]
-  );
-
-  const applyNoise = useCallback(
-    (vertex: Vector3, noise: number) => {
-      const elevation = radius + Math.max(noiseMin, noise) * elevationScale;
-      vertex.setLength(elevation);
-      return elevation;
-    },
-    [elevationScale, noiseMin, radius]
-  );
-
-  const getElevationNoise = useCallback(
-    (noise: number) =>
-      center.noise * elevationOffset + noise * (1 - elevationOffset),
-    [center.noise, elevationOffset]
-  );
-
-  const applyElevation = useCallback(
-    (tile: PlanetTilePolygon) => {
-      const centerElevation = applyNoise(tile.center, center.noise);
-      if (center.noise <= noiseMin) {
-        for (let index = 0; index < tile.polygon.length; index++) {
-          tile.polygon[index].setLength(centerElevation);
-        }
-      } else {
-        for (let index = 0; index < tile.polygon.length; index++) {
-          const elevationNoise = getElevationNoise(polygonNoises[index]);
-          applyNoise(tile.polygon[index], elevationNoise);
-        }
-      }
-    },
-    [applyNoise, center.noise, getElevationNoise, polygonNoises, noiseMin]
-  );
-
-  const applyPolygon = useCallback(
-    (tile: PlanetTilePolygon) => {
-      tile.origin.set(0, 0, 0);
-      tile.center.copy(center.position);
-      for (let index = 0; index < tile.polygon.length; index++) {
-        tile.polygon[index].copy(polygonPositions[index]);
-      }
-    },
-    [center.position, polygonPositions]
-  );
-
-  const ref = useUpdate<Mesh<ConeGeometry, Material>>(
-    ({ geometry }) => {
-      const tile = getTile(geometry.vertices);
-      applyPolygon(tile);
-      applyElevation(tile);
-    },
-    [applyElevation, applyPolygon]
-  );
-
   return (
-    <mesh name="PlanetTile" {...props} ref={ref}>
-      <coneGeometry args={[1, 1, polygon.length]} />
-      <meshLambertMaterial color={biome?.color} />
+    <mesh name="PlanetTile" {...props}>
+      <GeometryTile tileCenter={centerVertex} tilePolygon={polygonVertices} />
+      <meshLambertMaterial color={biome} />
     </mesh>
   );
 };

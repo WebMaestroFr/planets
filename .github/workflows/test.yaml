@@ -9,7 +9,7 @@ jobs:
       - name: 🌳 Use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: "12.x"
+          node-version: "14.x"
       - name: 📦 Install dependencies
         run: yarn --frozen-lockfile
       - name: 👮 Run linters

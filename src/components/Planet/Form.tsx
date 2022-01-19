@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
-import { PlanetSettings } from "../../objects/planet/planet";
+import { PlanetSettings } from "../../contexts/planet/planet";
 
 export const PlanetForm: FC<{
   onUpdate: Dispatch<SetStateAction<PlanetSettings>>;

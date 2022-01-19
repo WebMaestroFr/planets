@@ -2,7 +2,7 @@ import React, { FC, useEffect } from "react";
 import { Canvas, useThree } from "react-three-fiber";
 import Planet from "./components/Planet";
 import ControlsProvider from "./contexts/controls/Provider";
-import useSettings, { Settings } from "./contexts/settings";
+import useSettings, { SettingsContext } from "./contexts/settings";
 import SettingsProvider from "./contexts/settings/Provider";
 
 export const AppScene: FC = () => {
@@ -15,13 +15,11 @@ export const AppScene: FC = () => {
 
   return (
     <ControlsProvider>
-      <pointLight
-        position={[
-          -settings.planet.radius,
-          -settings.planet.radius,
-          -settings.planet.radius,
-        ]}
+      <directionalLight
+        intensity={0.67}
+        position={[-settings.planet.radius, settings.planet.radius, 0]}
       />
+      <ambientLight intensity={0.33} />
       <Planet settings={settings.planet} />
     </ControlsProvider>
   );
@@ -31,9 +29,9 @@ const AppCanvas: FC = () => {
   const settings = useSettings();
   return (
     <Canvas className="AppCanvas">
-      <Settings.Provider value={settings}>
+      <SettingsContext.Provider value={settings}>
         <AppScene />
-      </Settings.Provider>
+      </SettingsContext.Provider>
     </Canvas>
   );
 };

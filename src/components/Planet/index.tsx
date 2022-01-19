@@ -1,31 +1,67 @@
-import React, { createContext, FC, useContext, useRef } from "react";
-import { useFrame } from "react-three-fiber";
-import { Group } from "three";
-import { useTiles } from "../../hooks/tiles";
-import { PlanetSettings } from "../../objects/planet/planet";
+import React, { FC, useCallback, useMemo } from "react";
+import { GroupProps } from "react-three-fiber";
+import { PlanetContext, usePlanet } from "../../contexts/planet";
+import useBiomes from "../../contexts/planet/biomes";
+import useNoise from "../../contexts/planet/noise";
+import {
+  PlanetProps,
+  PlanetTileProps,
+  VectorCoordinates,
+} from "../../contexts/planet/planet";
+import { useTiles } from "../../contexts/planet/tiles";
 import Tile from "./Tile";
 
-const PlanetContext = createContext<PlanetSettings>({} as PlanetSettings);
-export const usePlanet = () => useContext(PlanetContext);
+export const PlanetComponent: FC<GroupProps> = (props) => {
+  const { minDistance, noiseMin, noiseRadius, seed, tries } = usePlanet();
+  const tiles = useTiles(seed, minDistance, tries);
 
-export const Planet: FC<{ settings: PlanetSettings }> = ({ settings }) => {
-  const ref = useRef<Group>();
-  const tiles = useTiles(settings);
+  const noiseLayers = useMemo(
+    () => [
+      { scalar: noiseRadius, weight: 1 },
+      { scalar: noiseRadius * 2, weight: 1 / 2 },
+      { scalar: noiseRadius * 4, weight: 1 / 4 },
+      { scalar: noiseRadius * 8, weight: 1 / 8 },
+    ],
+    [noiseRadius]
+  );
+  const getNoise = useNoise(seed, noiseLayers);
+  const getBiome = useBiomes(noiseMin);
 
-  useFrame(() => {
-    if (ref && ref.current) {
-      ref.current.rotation.y -= 0.005;
-    }
-  });
+  const getTilePoint = useCallback(
+    (coordinates: VectorCoordinates) => ({
+      coordinates,
+      noise: getNoise(coordinates),
+    }),
+    [getNoise]
+  );
+
+  const tilesProps = useMemo<PlanetTileProps[]>(() => {
+    const timeKey = Date.now().toString();
+    return tiles.map(({ center, polygon }, index) => {
+      const centerPoint = getTilePoint(center);
+      return {
+        biome: getBiome(centerPoint),
+        center: centerPoint,
+        key: `${timeKey}-${index}`,
+        polygon: polygon.map(getTilePoint),
+      };
+    });
+  }, [getBiome, getTilePoint, tiles]);
 
   return (
-    <group name="Planet" ref={ref}>
-      <PlanetContext.Provider value={settings}>
-        {tiles.map((tile) => (
-          <Tile key={tile.key} center={tile.center} polygon={tile.polygon} />
-        ))}
-      </PlanetContext.Provider>
+    <group name="Planet" {...props}>
+      {tilesProps.map(({ key, ...tileProps }) => (
+        <Tile key={key} {...tileProps} />
+      ))}
     </group>
+  );
+};
+
+export const Planet: FC<PlanetProps> = ({ settings }) => {
+  return (
+    <PlanetContext.Provider value={settings}>
+      <PlanetComponent />
+    </PlanetContext.Provider>
   );
 };
 
