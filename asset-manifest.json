@@ -1,26 +1,21 @@
 {
   "files": {
-    "main.css": "/planets/static/css/main.a9f6a862.chunk.css",
-    "main.js": "/planets/static/js/main.8cdd9676.chunk.js",
-    "main.js.map": "/planets/static/js/main.8cdd9676.chunk.js.map",
-    "runtime-main.js": "/planets/static/js/runtime-main.5a031fc2.js",
-    "runtime-main.js.map": "/planets/static/js/runtime-main.5a031fc2.js.map",
-    "static/css/2.b4bc1cba.chunk.css": "/planets/static/css/2.b4bc1cba.chunk.css",
-    "static/js/2.b48274ef.chunk.js": "/planets/static/js/2.b48274ef.chunk.js",
-    "static/js/2.b48274ef.chunk.js.map": "/planets/static/js/2.b48274ef.chunk.js.map",
-    "static/js/3.581a65e5.chunk.js": "/planets/static/js/3.581a65e5.chunk.js",
-    "static/js/3.581a65e5.chunk.js.map": "/planets/static/js/3.581a65e5.chunk.js.map",
+    "main.css": "/planets/static/css/main.d9ffda37.css",
+    "main.js": "/planets/static/js/main.6943279d.js",
+    "static/js/787.57e52064.chunk.js": "/planets/static/js/787.57e52064.chunk.js",
+    "static/media/icons-20.eot": "/planets/static/media/icons-20.cde033c5d3f24283f757.eot",
+    "static/media/icons-20.woff": "/planets/static/media/icons-20.1ef633d3a28d0986f63e.woff",
+    "static/media/icons-20.ttf": "/planets/static/media/icons-20.57b3e708b232fdcb64f9.ttf",
+    "static/media/icons-16.eot": "/planets/static/media/icons-16.2368f88a078780d80145.eot",
+    "static/media/icons-16.woff": "/planets/static/media/icons-16.1645f50fb7f7c109f64e.woff",
+    "static/media/icons-16.ttf": "/planets/static/media/icons-16.13933033991f62d6bb64.ttf",
     "index.html": "/planets/index.html",
-    "static/css/2.b4bc1cba.chunk.css.map": "/planets/static/css/2.b4bc1cba.chunk.css.map",
-    "static/css/main.a9f6a862.chunk.css.map": "/planets/static/css/main.a9f6a862.chunk.css.map",
-    "static/js/2.b48274ef.chunk.js.LICENSE.txt": "/planets/static/js/2.b48274ef.chunk.js.LICENSE.txt",
-    "static/media/index.scss": "/planets/static/media/icons-20.cde033c5.eot"
+    "main.d9ffda37.css.map": "/planets/static/css/main.d9ffda37.css.map",
+    "main.6943279d.js.map": "/planets/static/js/main.6943279d.js.map",
+    "787.57e52064.chunk.js.map": "/planets/static/js/787.57e52064.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.5a031fc2.js",
-    "static/css/2.b4bc1cba.chunk.css",
-    "static/js/2.b48274ef.chunk.js",
-    "static/css/main.a9f6a862.chunk.css",
-    "static/js/main.8cdd9676.chunk.js"
+    "static/css/main.d9ffda37.css",
+    "static/js/main.6943279d.js"
   ]
 }
