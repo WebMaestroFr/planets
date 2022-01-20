@@ -17,10 +17,10 @@ const PlanetTile: FC<PlanetTileProps> = ({
     [radius, noiseMin, elevationScale]
   );
 
-  const centerElevation = useMemo(() => getElevation(center.noise), [
-    center.noise,
-    getElevation,
-  ]);
+  const centerElevation = useMemo(
+    () => getElevation(center.noise),
+    [center.noise, getElevation]
+  );
 
   const centerVertex = useMemo(() => {
     const vertex = new Vector3(...center.coordinates);

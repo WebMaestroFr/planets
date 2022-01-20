@@ -19,9 +19,8 @@ describe("Planet", () => {
       const sphericalCoordinates = toSphericalCoordinates(
         geographicalDistribution
       );
-      const geographicalCoordinates = toGeographicalCoordinates(
-        sphericalCoordinates
-      );
+      const geographicalCoordinates =
+        toGeographicalCoordinates(sphericalCoordinates);
       expect(sphericalCoordinates).toEqual(sphericalDistribution);
       expect(geographicalCoordinates).toEqual(geographicalDistribution);
     });

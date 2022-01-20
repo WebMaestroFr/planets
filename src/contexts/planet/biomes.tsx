@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Color, MathUtils } from "three";
+import { Color } from "three";
 import biomesSrc from "../../assets/biomes.png";
 import { PlanetTilePoint } from "./planet";
 
