@@ -17,10 +17,10 @@ export const PlanetComponent: FC<GroupProps> = (props) => {
 
   const noiseLayers = useMemo(
     () => [
-      { scalar: noiseRadius, weight: 1 },
-      { scalar: noiseRadius * 2, weight: 1 / 2 },
-      { scalar: noiseRadius * 4, weight: 1 / 4 },
-      { scalar: noiseRadius * 8, weight: 1 / 8 },
+      { scale: noiseRadius, weight: 1 },
+      { scale: noiseRadius * 2, weight: 1 / 2 },
+      { scale: noiseRadius * 4, weight: 1 / 4 },
+      { scale: noiseRadius * 8, weight: 1 / 8 },
     ],
     [noiseRadius]
   );

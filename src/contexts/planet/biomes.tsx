@@ -53,7 +53,7 @@ export default function useBiomes(noiseMin: number) {
       if (noise <= noiseMin) {
         return oceanColor;
       }
-      const phi = Math.acos(MathUtils.clamp(coordinates[1], -1, 1));
+      const phi = Math.acos(coordinates[1]);
       const u = (Math.abs(phi - Math.PI / 2) / Math.PI) * 2;
       const vNoise = (noise + 1) / 2;
       const vMin = (noiseMin + 1) / 2;

@@ -4,7 +4,7 @@ import { PlanetSettings, VectorCoordinates } from "./planet";
 
 export default function useNoise(
   seed: PlanetSettings["seed"],
-  layers: { scalar: number; weight: number }[]
+  layers: { scale: number; weight: number }[]
 ) {
   const simplex = useMemo(() => new SimplexNoise(seed), [seed]);
   const weightSum = useMemo(
@@ -14,9 +14,9 @@ export default function useNoise(
   return useCallback(
     ([x, y, z]: VectorCoordinates) => {
       return layers.reduce(
-        (noise, { scalar, weight }) =>
+        (noise, { scale, weight }) =>
           noise +
-          simplex.noise3D(x * scalar, y * scalar, z * scalar) *
+          simplex.noise3D(x * scale, y * scale, z * scale) *
             (weight / weightSum),
         0
       );

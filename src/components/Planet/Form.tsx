@@ -8,6 +8,24 @@ import React, {
 import { FormGroup, InputGroup, NumericInput, Slider } from "@blueprintjs/core";
 import { PlanetSettings } from "../../contexts/planet/planet";
 
+type ValidationParams = { min?: number; max?: number; step?: number };
+export const validateNumberInput = (
+  value: number,
+  { min, max, step }: ValidationParams
+) => {
+  if (min && (value < min || isNaN(value))) {
+    return min;
+  } else if (max && (value > max || isNaN(value))) {
+    return max;
+  } else if (isNaN(value)) {
+    return 0;
+  } else if (step && value % step !== 0) {
+    const factor = Math.round(value / step);
+    return factor * step;
+  }
+  return value;
+};
+
 export const PlanetForm: FC<{
   onUpdate: Dispatch<SetStateAction<PlanetSettings>>;
   settings: PlanetSettings;
@@ -25,15 +43,15 @@ export const PlanetForm: FC<{
   },
 }) => {
   const handleChange = useCallback(
-    (key: string) => ({
-      currentTarget: { value },
-    }: ChangeEvent<HTMLInputElement>) => {
-      onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
-    },
+    (key: string) =>
+      ({ currentTarget: { value } }: ChangeEvent<HTMLInputElement>) => {
+        onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
+      },
     [onUpdate]
   );
   const handleValueChange = useCallback(
-    (key: string) => (value: number) => {
+    (key: string, validation: ValidationParams) => (input: number) => {
+      const value = validateNumberInput(input, validation);
       onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
     },
     [onUpdate]
@@ -51,7 +69,7 @@ export const PlanetForm: FC<{
         <NumericInput
           fill={true}
           min={0}
-          onValueChange={handleValueChange("radius")}
+          onValueChange={handleValueChange("radius", { min: 0 })}
           value={radius}
         />
       </FormGroup>
@@ -63,7 +81,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={0.01}
           minorStepSize={null}
-          onValueChange={handleValueChange("minDistance")}
+          onValueChange={handleValueChange("minDistance", { min: 0.01 })}
           stepSize={0.01}
           value={minDistance}
         />
@@ -73,7 +91,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={2}
           minorStepSize={null}
-          onValueChange={handleValueChange("tries")}
+          onValueChange={handleValueChange("tries", { min: 2 })}
           value={tries}
         />
       </FormGroup>
@@ -82,17 +100,17 @@ export const PlanetForm: FC<{
           fill={true}
           min={0}
           minorStepSize={null}
-          onValueChange={handleValueChange("noiseRadius")}
+          onValueChange={handleValueChange("noiseRadius", { min: 0 })}
           stepSize={0.1}
           value={noiseRadius}
         />
       </FormGroup>
-      <FormGroup className="PlanetForm-noiseMin" label="Minimum Noise">
+      <FormGroup className="PlanetForm-noiseMin" label="Sea Level">
         <Slider
           labelStepSize={0.5}
           max={1}
           min={-1}
-          onChange={handleValueChange("noiseMin")}
+          onChange={handleValueChange("noiseMin", { min: -1, max: 1 })}
           stepSize={0.1}
           value={noiseMin}
         />
@@ -105,7 +123,7 @@ export const PlanetForm: FC<{
           labelStepSize={0.25}
           max={1}
           min={0}
-          onChange={handleValueChange("elevationOffset")}
+          onChange={handleValueChange("elevationOffset", { min: 0, max: 1 })}
           stepSize={0.01}
           value={elevationOffset}
         />
@@ -115,7 +133,7 @@ export const PlanetForm: FC<{
           fill={true}
           min={0}
           minorStepSize={null}
-          onValueChange={handleValueChange("elevationScale")}
+          onValueChange={handleValueChange("elevationScale", { min: 0 })}
           stepSize={0.1}
           value={elevationScale}
         />
