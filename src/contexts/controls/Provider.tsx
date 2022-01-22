@@ -1,13 +1,14 @@
 import React, { FC, useRef } from "react";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { ControlsContext } from "./index";
-import { extend, useFrame, useThree } from "react-three-fiber";
+import { extend, useFrame, useThree } from "@react-three/fiber";
 
 extend({ OrbitControls });
 
 export const ControlsProvider: FC = ({ children, ...props }) => {
   const ref = useRef<OrbitControls>();
-  const { camera, gl } = useThree();
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
 
   useFrame(() => {
     if (ref && ref.current) {

@@ -11,7 +11,7 @@ import { PlanetSettings } from "../../contexts/planet/planet";
 type ValidationParams = { min?: number; max?: number; step?: number };
 export const validateNumberInput = (
   value: number,
-  { min, max, step }: ValidationParams
+  { min, max, step }: ValidationParams = {}
 ) => {
   if (min && (value < min || isNaN(value))) {
     return min;
@@ -50,7 +50,7 @@ export const PlanetForm: FC<{
     [onUpdate]
   );
   const handleValueChange = useCallback(
-    (key: string, validation: ValidationParams) => (input: number) => {
+    (key: string, validation?: ValidationParams) => (input: number) => {
       const value = validateNumberInput(input, validation);
       onUpdate((prevSettings) => ({ ...prevSettings, [key]: value }));
     },
@@ -86,7 +86,7 @@ export const PlanetForm: FC<{
           value={minDistance}
         />
       </FormGroup>
-      <FormGroup className="PlanetForm-tries" label="Sampling tries">
+      <FormGroup className="PlanetForm-tries" label="Sampling Tries">
         <NumericInput
           fill={true}
           min={2}

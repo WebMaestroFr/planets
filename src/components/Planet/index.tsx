@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo } from "react";
-import { GroupProps } from "react-three-fiber";
+import { GroupProps } from "@react-three/fiber";
 import { PlanetContext, usePlanet } from "../../contexts/planet";
 import useBiomes from "../../contexts/planet/biomes";
 import useNoise from "../../contexts/planet/noise";

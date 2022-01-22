@@ -1,5 +1,5 @@
-import { FC, useMemo } from "react";
-import { BufferGeometryProps, useUpdate } from "react-three-fiber";
+import { FC, useEffect, useMemo, useRef } from "react";
+import { BufferGeometryProps } from "@react-three/fiber";
 import { BufferGeometry, Float32BufferAttribute, Vector3 } from "three";
 
 const GeometryTile: FC<
@@ -8,6 +8,7 @@ const GeometryTile: FC<
     tilePolygon: Vector3[];
   }
 > = ({ tileCenter, tilePolygon, ...props }) => {
+  const ref = useRef<BufferGeometry>();
   const vertices = useMemo(() => {
     const centerNormal = tileCenter.clone().normalize();
     const baseNormals = tilePolygon.map((vertex) =>
@@ -104,14 +105,11 @@ const GeometryTile: FC<
     return new Float32BufferAttribute(uvs, 2);
   }, [vertices]);
 
-  const ref = useUpdate<BufferGeometry>(
-    (geometry) => {
-      geometry.setAttribute("position", positionsAttribute);
-      geometry.setAttribute("normal", normalsAttribute);
-      geometry.setAttribute("uv", uvsAttribute);
-    },
-    [positionsAttribute, normalsAttribute, uvsAttribute]
-  );
+  useEffect(() => {
+    ref.current?.setAttribute("position", positionsAttribute);
+    ref.current?.setAttribute("normal", normalsAttribute);
+    ref.current?.setAttribute("uv", uvsAttribute);
+  }, [positionsAttribute, normalsAttribute, uvsAttribute]);
 
   return <bufferGeometry ref={ref} {...props} />;
 };

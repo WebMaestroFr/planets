@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { Canvas, useThree } from "react-three-fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import Planet from "./components/Planet";
 import ControlsProvider from "./contexts/controls/Provider";
 import useSettings, { SettingsContext } from "./contexts/settings";
@@ -7,7 +7,7 @@ import SettingsProvider from "./contexts/settings/Provider";
 
 export const AppScene: FC = () => {
   const settings = useSettings();
-  const { camera } = useThree();
+  const camera = useThree((state) => state.camera);
 
   useEffect(() => {
     camera.position.set(0, 0, -settings.planet.radius * 2);
