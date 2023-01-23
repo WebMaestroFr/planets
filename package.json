@@ -16,7 +16,7 @@
     "@types/seedrandom": "^3.0.1",
     "@types/three": "^0.136.1",
     "d3-geo-voronoi": "^2.0.1",
-    "gh-pages": "^3.2.3",
+    "gh-pages": "^5.0.0",
     "poisson-disk-sampling": "^2.2.2",
     "prettier": "^2.2.1",
     "react": "^17.0.2",
